@@ -1,0 +1,132 @@
+<resources>
+    <settings>
+        <setting propertyKey="@Properties.DataSource" title="@Strings.DataSourceTitle">
+            <settingConfig type="list">
+                <listEntry value="1">@Strings.SrcNightscout</listEntry>
+                <listEntry value="2">@Strings.SrcXdrip</listEntry>
+                <listEntry value="3">@Strings.SrcAaps</listEntry>
+                <listEntry value="0">@Strings.SrcMock</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.NightscoutUrl" title="@Strings.NsUrlTitle">
+            <settingConfig type="alphaNumeric"/>
+        </setting>
+        <setting propertyKey="@Properties.NightscoutToken" title="@Strings.NsTokenTitle">
+            <settingConfig type="alphaNumeric"/>
+        </setting>
+        <setting propertyKey="@Properties.Units" title="@Strings.UnitsTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.UnitsMgdl</listEntry>
+                <listEntry value="1">@Strings.UnitsMmol</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.Low" title="@Strings.LowTitle" prompt="@Strings.ThresholdPrompt">
+            <settingConfig type="numeric" min="2" max="150"/>
+        </setting>
+        <setting propertyKey="@Properties.High" title="@Strings.HighTitle" prompt="@Strings.ThresholdPrompt">
+            <settingConfig type="numeric" min="5" max="400"/>
+        </setting>
+        <setting propertyKey="@Properties.TimeColor" title="@Strings.TimeColorTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.TimeWhite</listEntry>
+                <listEntry value="1">@Strings.TimeMinutes</listEntry>
+                <listEntry value="2">@Strings.TimeAll</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.Stat1" title="@Strings.SlotLeftTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.FieldNone</listEntry>
+                <listEntry value="1">@Strings.FieldIob</listEntry>
+                <listEntry value="2">@Strings.FieldCob</listEntry>
+                <listEntry value="3">@Strings.FieldBasal</listEntry>
+                <listEntry value="4">@Strings.FieldHeart</listEntry>
+                <listEntry value="5">@Strings.FieldBattery</listEntry>
+                <listEntry value="6">@Strings.FieldSteps</listEntry>
+                <listEntry value="7">@Strings.FieldBodyBattery</listEntry>
+                <listEntry value="8">@Strings.FieldCalories</listEntry>
+                <listEntry value="9">@Strings.FieldVo2Max</listEntry>
+                <listEntry value="10">@Strings.FieldTemperature</listEntry>
+                <listEntry value="11">@Strings.FieldStress</listEntry>
+                <listEntry value="12">@Strings.FieldFloors</listEntry>
+                <listEntry value="13">@Strings.FieldActiveMin</listEntry>
+                <listEntry value="14">@Strings.FieldElevationGain</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.Stat2" title="@Strings.SlotRightTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.FieldNone</listEntry>
+                <listEntry value="1">@Strings.FieldIob</listEntry>
+                <listEntry value="2">@Strings.FieldCob</listEntry>
+                <listEntry value="3">@Strings.FieldBasal</listEntry>
+                <listEntry value="4">@Strings.FieldHeart</listEntry>
+                <listEntry value="5">@Strings.FieldBattery</listEntry>
+                <listEntry value="6">@Strings.FieldSteps</listEntry>
+                <listEntry value="7">@Strings.FieldBodyBattery</listEntry>
+                <listEntry value="8">@Strings.FieldCalories</listEntry>
+                <listEntry value="9">@Strings.FieldVo2Max</listEntry>
+                <listEntry value="10">@Strings.FieldTemperature</listEntry>
+                <listEntry value="11">@Strings.FieldStress</listEntry>
+                <listEntry value="12">@Strings.FieldFloors</listEntry>
+                <listEntry value="13">@Strings.FieldActiveMin</listEntry>
+                <listEntry value="14">@Strings.FieldElevationGain</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.Stat3" title="@Strings.SlotBottom1Title">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.FieldNone</listEntry>
+                <listEntry value="1">@Strings.FieldIob</listEntry>
+                <listEntry value="2">@Strings.FieldCob</listEntry>
+                <listEntry value="3">@Strings.FieldBasal</listEntry>
+                <listEntry value="4">@Strings.FieldHeart</listEntry>
+                <listEntry value="5">@Strings.FieldBattery</listEntry>
+                <listEntry value="6">@Strings.FieldSteps</listEntry>
+                <listEntry value="7">@Strings.FieldBodyBattery</listEntry>
+                <listEntry value="8">@Strings.FieldCalories</listEntry>
+                <listEntry value="9">@Strings.FieldVo2Max</listEntry>
+                <listEntry value="10">@Strings.FieldTemperature</listEntry>
+                <listEntry value="11">@Strings.FieldStress</listEntry>
+                <listEntry value="12">@Strings.FieldFloors</listEntry>
+                <listEntry value="13">@Strings.FieldActiveMin</listEntry>
+                <listEntry value="14">@Strings.FieldElevationGain</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.Stat4b" title="@Strings.SlotBottom2Title">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.FieldNone</listEntry>
+                <listEntry value="1">@Strings.FieldIob</listEntry>
+                <listEntry value="2">@Strings.FieldCob</listEntry>
+                <listEntry value="3">@Strings.FieldBasal</listEntry>
+                <listEntry value="4">@Strings.FieldHeart</listEntry>
+                <listEntry value="5">@Strings.FieldBattery</listEntry>
+                <listEntry value="6">@Strings.FieldSteps</listEntry>
+                <listEntry value="7">@Strings.FieldBodyBattery</listEntry>
+                <listEntry value="8">@Strings.FieldCalories</listEntry>
+                <listEntry value="9">@Strings.FieldVo2Max</listEntry>
+                <listEntry value="10">@Strings.FieldTemperature</listEntry>
+                <listEntry value="11">@Strings.FieldStress</listEntry>
+                <listEntry value="12">@Strings.FieldFloors</listEntry>
+                <listEntry value="13">@Strings.FieldActiveMin</listEntry>
+                <listEntry value="14">@Strings.FieldElevationGain</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.BottomField" title="@Strings.SlotBottom3Title">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.FieldNone</listEntry>
+                <listEntry value="1">@Strings.FieldIob</listEntry>
+                <listEntry value="2">@Strings.FieldCob</listEntry>
+                <listEntry value="3">@Strings.FieldBasal</listEntry>
+                <listEntry value="4">@Strings.FieldHeart</listEntry>
+                <listEntry value="5">@Strings.FieldBattery</listEntry>
+                <listEntry value="6">@Strings.FieldSteps</listEntry>
+                <listEntry value="7">@Strings.FieldBodyBattery</listEntry>
+                <listEntry value="8">@Strings.FieldCalories</listEntry>
+                <listEntry value="9">@Strings.FieldVo2Max</listEntry>
+                <listEntry value="10">@Strings.FieldTemperature</listEntry>
+                <listEntry value="11">@Strings.FieldStress</listEntry>
+                <listEntry value="12">@Strings.FieldFloors</listEntry>
+                <listEntry value="13">@Strings.FieldActiveMin</listEntry>
+                <listEntry value="14">@Strings.FieldElevationGain</listEntry>
+            </settingConfig>
+        </setting>
+    </settings>
+</resources>

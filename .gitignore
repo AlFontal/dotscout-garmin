@@ -1,0 +1,10 @@
+bin/
+*.der
+*.pem
+.DS_Store
+resources-local/
+local.jungle
+.env
+dist/
+.beta.env
+manifest.xml.orig

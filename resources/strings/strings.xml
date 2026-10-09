@@ -1,0 +1,55 @@
+<strings>
+    <string id="AppName">Dotscout</string>
+
+    <string id="DataSourceTitle">Data source</string>
+    <string id="SrcMock">Demo (simulated data)</string>
+    <string id="SrcNightscout">Nightscout</string>
+    <string id="SrcXdrip">xDrip+ (phone, local)</string>
+    <string id="SrcAaps">AndroidAPS (phone, local)</string>
+
+    <string id="ScenarioTitle">Mock scenario</string>
+    <string id="ScSteady">Steady in range</string>
+    <string id="ScDay">Realistic day</string>
+    <string id="ScRising">Rising fast after a meal</string>
+    <string id="ScFalling">Dropping toward low</string>
+    <string id="ScHigh">Sustained high</string>
+    <string id="ScStale">Stale (no reading for 25 min)</string>
+    <string id="ScNoData">No data</string>
+
+    <string id="NsUrlTitle">Nightscout URL</string>
+    <string id="NsTokenTitle">Nightscout token</string>
+
+    <string id="UnitsTitle">Units</string>
+    <string id="UnitsMgdl">mg/dL</string>
+    <string id="UnitsMmol">mmol/L</string>
+    <string id="LowTitle">Low threshold</string>
+    <string id="HighTitle">High threshold</string>
+    <string id="ThresholdPrompt">In mg/dL (70) or mmol/L (3.9)</string>
+
+    <string id="TimeColorTitle">Time colour</string>
+    <string id="TimeWhite">White</string>
+    <string id="TimeMinutes">Minutes by glucose</string>
+    <string id="TimeAll">Whole time by glucose</string>
+
+    <string id="SlotLeftTitle">Data field 1 (left)</string>
+    <string id="SlotRightTitle">Data field 2</string>
+    <string id="SlotBottom1Title">Data field 3</string>
+    <string id="SlotBottom2Title">Data field 4 (right)</string>
+    <string id="SlotBottom3Title">Bottom field</string>
+
+    <string id="FieldNone">None</string>
+    <string id="FieldIob">Insulin on board</string>
+    <string id="FieldCob">Carbs on board</string>
+    <string id="FieldBasal">Basal rate</string>
+    <string id="FieldHeart">Heart rate</string>
+    <string id="FieldBattery">Battery</string>
+    <string id="FieldSteps">Steps</string>
+    <string id="FieldBodyBattery">Body Battery</string>
+    <string id="FieldCalories">Calories</string>
+    <string id="FieldVo2Max">VO2 max</string>
+    <string id="FieldTemperature">Temperature</string>
+    <string id="FieldStress">Stress</string>
+    <string id="FieldFloors">Floors climbed</string>
+    <string id="FieldActiveMin">Active minutes (week)</string>
+    <string id="FieldElevationGain">Elevation gain (today)</string>
+</strings>
