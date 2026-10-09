@@ -1,0 +1,41 @@
+name: Release
+
+# Push a tag matching the manifest version (e.g. v1.0.1) to build the signed store package and
+# attach it to a GitHub release. The Connect IQ Store has no upload API, so the upload stays manual.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Check the tag matches the manifest version
+        run: |
+          v=$(grep -o '<iq:application[^>]*version="[^"]*"' manifest.xml | sed 's/.*version="//; s/"$//')
+          [ "v$v" = "$GITHUB_REF_NAME" ] || { echo "Tag $GITHUB_REF_NAME does not match manifest version $v"; exit 1; }
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+      - name: Install the Connect IQ SDK and devices
+        run: .github/actions-setup.sh
+        env:
+          GARMIN_USERNAME: ${{ secrets.GARMIN_USERNAME }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          CIQ_AGREEMENT_HASH: ${{ vars.CIQ_AGREEMENT_HASH }}
+      # Every version must be signed with the same developer key as the store app.
+      - name: Build the signed store package
+        run: |
+          echo "${{ secrets.DEVELOPER_KEY_BASE64 }}" | base64 -d > /tmp/developer_key
+          monkeyc -e -r -f monkey.jungle -o "Dotscout-$VERSION.iq" -y /tmp/developer_key -w
+          rm /tmp/developer_key
+      - name: Create the GitHub release
+        run: gh release create "$GITHUB_REF_NAME" "Dotscout-$VERSION.iq" --title "Dotscout $VERSION" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

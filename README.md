@@ -10,6 +10,8 @@ A Connect IQ watch face for 454 × 454 AMOLED Garmin watches that puts continuou
 
 Colour only ever means glucose: green in range, amber high, orange very high, red low, grey when the reading is over 15 minutes old. Everything else is white or grey.
 
+![Dotscout on the ten supported watches](docs/store/all-devices.png)
+
 ## Supported watches
 
 Forerunner 965, 970 and 570 (47 mm), fēnix 8 (47/51 mm, AMOLED) and fēnix 8 Pro, epix Pro (Gen 2) 51 mm, Venu 3, Venu 4 45 mm, D2 Mach 2 and D2 Mach 2 Pro, plus the models that share those device profiles (tactix 7/8, quatix 8, D2 Mach 1 Pro, D2 Air X15). All are 454 × 454 AMOLED.
@@ -139,3 +141,28 @@ To add one:
 1. Add an id to the enum in `source/Fields.mc` (append it so stored settings keep their meaning) and a case in `Fields.value()` returning `[icon key, value, unit]`. Draw the icon in `source/Icons.mc`, or add a bitmap fallback to `ICONS` in `tools/gen_assets.py` (it writes `drawables.xml`).
 2. Add a `<listEntry>` for it under each of the five field settings in `resources/settings/settings.xml`.
 3. Add its name to `resources/strings/strings.xml`.
+
+## Continuous integration and releases
+
+`.github/workflows/build.yml` compiles the face for every supported watch on each push and pull request. `.github/workflows/release.yml` runs when a tag such as `v1.0.1` is pushed: it checks the tag matches the manifest version, builds the signed store package and attaches it to a GitHub release. The Connect IQ Store has no upload API, so the package is then uploaded by hand on the developer site.
+
+CI installs the SDK and devices with the community [connect-iq-sdk-manager](https://github.com/lindell/connect-iq-sdk-manager-cli) CLI (`.github/actions-setup.sh`), because Garmin only serves device files to a signed-in account. The repository needs:
+
+| Name | Kind | Value |
+| --- | --- | --- |
+| `GARMIN_USERNAME`, `GARMIN_PASSWORD` | Secrets | A Garmin account that can download the SDK |
+| `CIQ_AGREEMENT_HASH` | Variable | The acceptance hash printed by `connect-iq-sdk-manager agreement view` after you read Garmin's SDK agreement |
+| `DEVELOPER_KEY_BASE64` | Secret | The store app's developer key, `base64 -i developer_key` (release only) |
+
+Pull requests from forks get no secrets, so their build check is skipped.
+
+To release: bump the version in `manifest.xml`, commit, then tag and push.
+
+```bash
+git tag v1.0.1 && git push origin v1.0.1
+```
+
+## Licence
+
+MIT, see `LICENSE`. The watch images in `docs/store/all-devices.png` are Garmin's device renders from the Connect IQ SDK, © Garmin, and are not covered by this licence.
+
