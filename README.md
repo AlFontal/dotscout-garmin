@@ -125,14 +125,14 @@ Store images and screenshots are in `docs/store/`, including `all-devices.png`, 
 
 - Status row: Bluetooth (only while the phone is connected) and battery, then the date.
 - The time as a dot matrix, with a dotted divider below it.
-- Glucose on one baseline: the value, a trend arrow drawn with the digits' stroke (flat, 45°, vertical, or double above 3 mg/dL per minute), then the change over the reading age. The change's tops align with the value's caps and the age sits on its baseline.
+- Glucose row: reading age (clock and minutes, e.g. 12') at the value's top left, the value, a trend arrow drawn with the digits' stroke (flat, 45°, vertical, or double above 3 mg/dL per minute), then the change. The change is vertically centred on the value and uses the same glucose-state colour.
 - The 3 h graph: one dot per 5-minute reading on a 50–230 mg/dL scale between dotted low and high lines, coloured by range, with the latest reading as a larger dot.
 - Four data fields: a grey icon, the value and a muted unit.
 - The bottom field, heart rate by default, whose heart beats while the watch is awake.
 
 Vertical spacing follows the time's 13 px dot pitch, with extra room around the large glucose digits. All colours live in `Palette` in `source/CgmModel.mc`.
 
-**Always-on** keeps the date, the time as smaller dots, the glucose row and the graph, with the glucose and graph centred in the space below the time. Data fields, heart rate and the divider are hidden, and the face shifts a few pixels each minute against burn-in. It measures about 7% lit pixels in the simulator, within the AMOLED budget of about 10%.
+**Always-on** keeps the date, the time as smaller dots, the glucose row and a taller graph, with the glucose and graph centred in the space below the time. Data fields, heart rate and the divider are hidden, and the face shifts a few pixels each minute against burn-in. It measures about 7% lit pixels in the simulator, within the AMOLED budget of about 10%.
 
 ## Data fields
 
@@ -165,4 +165,3 @@ git tag v1.0.1 && git push origin v1.0.1
 ## Licence
 
 MIT, see `LICENSE`. The watch images in `docs/store/all-devices.png` are Garmin's device renders from the Connect IQ SDK, © Garmin, and are not covered by this licence.
-

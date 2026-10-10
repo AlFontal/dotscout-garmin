@@ -11,7 +11,7 @@ import Toybox.WatchUi;
 //
 //   status row (bluetooth while connected, battery) and date
 //   HH:MM as a 5 x 7 dot matrix, white or tinted by glucose (TimeColor setting)
-//   glucose and trend arrow, delta over age
+//   reading age, glucose and trend arrow, then delta
 //   3 h dot graph between dotted 70/180 lines
 //   four stats: tinted icon, value and unit
 //   heart rate
@@ -56,9 +56,11 @@ class CgmFaceView extends WatchUi.WatchFace {
         :delta => [:num, 26, 26],
         :deltaG => [:num, 34, 34],
         :stat => [:num, 30, 30],
+        :status => [:label, 17, 19],
+        :age => [:label, 19, 21],
         :small => [:label, 16, 18],
         :date => [:label, 15, 17],
-        :dateL => [:label, 24, 24],
+        :dateL => [:label, 28, 28],
         :minmax => [:label, 14, 16],
         :bpm => [:labelReg, 14, 16]
     };
@@ -151,7 +153,7 @@ class CgmFaceView extends WatchUi.WatchFace {
 
     // ---- F · Dots ---------------------------------------------------------------------------
 
-    private const AOD_LOWER = 56;
+    private const AOD_LOWER = 40;
 
     // 5 x 7 digits, one 5-bit row each, top row first; bit 4 is the left column.
     private const GLYPHS = [
@@ -178,7 +180,7 @@ class CgmFaceView extends WatchUi.WatchFace {
         }
         var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
         var date = Lang.format("$1$ $2$ $3$", [info.day_of_week, info.day, info.month]);
-        textAt(dc, :dateL, 227, 68, date, _aod ? Palette.AOD_MUTE : Palette.SOFT, Graphics.TEXT_JUSTIFY_CENTER);
+        textAt(dc, :dateL, 227, 72, date, _aod ? Palette.AOD_MUTE : Palette.SOFT, Graphics.TEXT_JUSTIFY_CENTER);
 
         var x = 227 - 12 * PITCH;
         var y = 92;
@@ -219,10 +221,10 @@ class CgmFaceView extends WatchUi.WatchFace {
         }
     }
 
-    // Glucose on black, set as one line of type on a shared baseline: the value, a trend arrow
-    // drawn with the digits' stroke and cap height, then a column whose delta tops align with the
-    // value's caps and whose age sits on its baseline.
+    // Glucose on black: reading age at the value's top left, then a trend arrow and delta. The
+    // age's caps start where the value's caps start; the smaller delta is vertically centred on them.
     private const GLUCOSE_BASE = 248;
+    private const AGE_BASE = GLUCOSE_BASE - 42 + 14;    // the 19 px label's caps are about 14 px
     private const TREND_SCALE = 1.18;    // the arrow's 36 px design was for a 56 px em
     private const GLUCOSE_CAP = 42;      // Bionic Bold digits are 0.643 em; 66 px em
 
@@ -243,23 +245,27 @@ class CgmFaceView extends WatchUi.WatchFace {
         var value = CgmModel.formatGlucose(sgv);
         var delta = stale ? "" : CgmModel.formatDelta(cgm["delta"]);
         var age = (now - (cgm["t"] as Number)) / 60;
-        var ageText = ((age < 0) ? 0 : age).toString() + " min";
+        var ageText = ((age < 0) ? 0 : age).toString() + "'";
         var vw = width(dc, :glucose, value);
         var arrowW = stale ? 0 : 40 + 16;
-        var ageW = 17 + width(dc, :small, ageText);
+        var ageW = 19 + width(dc, :age, ageText);
         var dw = width(dc, :deltaG, delta);
-        var colW = (dw > ageW) ? dw : ageW;
-        var x = 227 - (vw + 12 + arrowW + colW) / 2;
-        textAt(dc, :glucose, x, GLUCOSE_BASE, value, color, Graphics.TEXT_JUSTIFY_LEFT);
-        if (!stale) {
-            drawTrend(dc, cgm, x + vw + 12 + 20 + _ox, GLUCOSE_BASE - GLUCOSE_CAP / 2 + _oy, color);
-        }
-        var sx = x + vw + 12 + arrowW;
-        // Delta caps (0.643 x 34 px) start where the value's caps start.
-        textAt(dc, :deltaG, sx, GLUCOSE_BASE - GLUCOSE_CAP + 22, delta, _aod ? Palette.AOD_FG : Palette.FG, Graphics.TEXT_JUSTIFY_LEFT);
+        var ageGap = 6;
+        var rightW = stale ? 0 : 12 + arrowW + dw;
+        var x = 227 - (ageW + ageGap + vw + rightW) / 2;
         var ageColor = stale ? (_aod ? Palette.AOD_RED : Palette.DOT_LOW) : mute;
-        icon(dc, :clock, sx, GLUCOSE_BASE - 13, 14, ageColor);
-        textAt(dc, :small, sx + 17, GLUCOSE_BASE, ageText, ageColor, Graphics.TEXT_JUSTIFY_LEFT);
+        icon(dc, :clock, x, AGE_BASE - 15, 16, ageColor);
+        textAt(dc, :age, x + 19, AGE_BASE, ageText, ageColor, Graphics.TEXT_JUSTIFY_LEFT);
+
+        var gx = x + ageW + ageGap;
+        textAt(dc, :glucose, gx, GLUCOSE_BASE, value, color, Graphics.TEXT_JUSTIFY_LEFT);
+        if (!stale) {
+            drawTrend(dc, cgm, gx + vw + 12 + 20 + _ox, GLUCOSE_BASE - GLUCOSE_CAP / 2 + _oy, color);
+            var sx = gx + vw + 12 + arrowW;
+            // Bionic's 34 px delta has a 22 px cap height. Moving its baseline 10 px up centres
+            // that cap height inside the glucose value's 42 px cap height.
+            textAt(dc, :deltaG, sx, GLUCOSE_BASE - 10, delta, color, Graphics.TEXT_JUSTIFY_LEFT);
+        }
     }
 
     // Dotted rule between sections at the time's dot pitch, fading out towards both ends; none
@@ -315,10 +321,11 @@ class CgmFaceView extends WatchUi.WatchFace {
 
     // 3 h of dots between dotted 70 and 180 lines, centred under the glucose row.
     private function drawGraphOpen(dc as Dc, cgm as Dictionary?, now as Number) as Void {
-        var pw = 300;
+        // Always-on is taller and narrower, so its corners clear the round edge at every shift.
+        var pw = _aod ? 280 : 300;
         var px = 227 - pw / 2 + _ox;
         var py = 264 + _oy;
-        var ph = 40;
+        var ph = _aod ? 72 : 40;
         if (tallGraph()) {
             // Two and a half times as tall, on the left, so changes read as real slopes.
             pw = 206;
@@ -360,14 +367,14 @@ class CgmFaceView extends WatchUi.WatchFace {
             }
             var y = plotYh(v as Number, py, ph);
             dc.setColor(Palette.dot(CgmModel.state(v as Number, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(x, y, 1.8);
+            dc.fillCircle(x, y, 2.1);
             lastX = x;
             lastY = y;
             lastV = v as Number;
         }
         if (lastX >= 0) {
             dc.setColor(Palette.dot(CgmModel.state(lastV, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(lastX, lastY, 3.5);
+            dc.fillCircle(lastX, lastY, 4.0);
         }
     }
 
@@ -432,30 +439,30 @@ class CgmFaceView extends WatchUi.WatchFace {
         dc.clear();
     }
 
-    // Bluetooth (only while the phone is connected) and battery, centred as a group.
+    // Bluetooth (only while the phone is connected) and battery, centred as a larger group.
     private function drawStatus(dc as Dc, settings as System.DeviceSettings) as Void {
         var mute = _aod ? Palette.AOD_MUTE : Palette.MUTE;
         var pct = System.getSystemStats().battery;
         var label = pct.format("%d") + "%";
         var connected = settings.phoneConnected;
-        var w = 24 + 6 + width(dc, :minmax, label) + (connected ? 16 + 10 : 0);
+        var w = 29 + 8 + width(dc, :status, label) + (connected ? 20 + 12 : 0);
         var x = 227 - w / 2;
         if (connected) {
-            icon(dc, :bluetooth, x, 21, 16, _aod ? Palette.AOD_MUTE : Palette.MUTE);
-            x += 26;
+            icon(dc, :bluetooth, x, 17, 20, mute);
+            x += 32;
         }
         // Battery outline whose fill tracks the charge.
         var bx = x + _ox;
-        var by = 23 + _oy;
+        var by = 20 + _oy;
         dc.setColor(mute, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
-        dc.drawRoundedRectangle(bx, by, 21, 12, 3);
-        dc.fillRectangle(bx + 21, by + 4, 2, 4);
-        var fill = (17 * pct / 100).toNumber();
+        dc.drawRoundedRectangle(bx, by, 26, 15, 4);
+        dc.fillRectangle(bx + 26, by + 5, 3, 5);
+        var fill = (22 * pct / 100).toNumber();
         if (fill > 0) {
-            dc.fillRectangle(bx + 2, by + 2, fill, 8);
+            dc.fillRectangle(bx + 2, by + 2, fill, 11);
         }
-        textAt(dc, :minmax, x + 29, 34, label, mute, Graphics.TEXT_JUSTIFY_LEFT);
+        textAt(dc, :status, x + 37, 35, label, mute, Graphics.TEXT_JUSTIFY_LEFT);
     }
 
     // Trend arrow: flat for under 1 mg/dL per minute, 45 degrees for 1-2, vertical for 2-3 and
