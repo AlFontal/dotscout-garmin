@@ -28,8 +28,8 @@
         </setting>
         <setting propertyKey="@Properties.Layout" title="@Strings.LayoutTitle">
             <settingConfig type="list">
-                <listEntry value="0">@Strings.LayoutClassic</listEntry>
                 <listEntry value="1">@Strings.LayoutTall</listEntry>
+                <listEntry value="0">@Strings.LayoutClassic</listEntry>
             </settingConfig>
         </setting>
         <setting propertyKey="@Properties.TimeColor" title="@Strings.TimeColorTitle">

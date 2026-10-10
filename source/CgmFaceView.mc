@@ -383,7 +383,7 @@ class CgmFaceView extends WatchUi.WatchFace {
     private const TALL_HEIGHT = 106;
 
     private function tallGraph() as Boolean {
-        return !_aod && CgmConfig.getNumber("Layout", 0) == 1;
+        return !_aod && CgmConfig.getNumber("Layout", 1) == 1;
     }
 
     private function plotYh(mgdl as Number, top as Number, h as Number) as Number {

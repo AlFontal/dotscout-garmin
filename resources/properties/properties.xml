@@ -8,7 +8,7 @@
         <property id="Low" type="float">70</property>
         <property id="High" type="float">180</property>
         <property id="TimeColor" type="number">0</property>
-        <property id="Layout" type="number">0</property>
+        <property id="Layout" type="number">1</property>
         <property id="Stat1" type="number">6</property>
         <property id="Stat2" type="number">14</property>
         <property id="Stat3" type="number">7</property>

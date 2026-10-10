@@ -106,6 +106,7 @@ Set in the Connect IQ phone app (store installs) or baked in by `tools/make-loca
 | Nightscout URL, Nightscout token | Your site, and a read-only token (optional for public sites) |
 | Units | mg/dL or mmol/L |
 | Low threshold, High threshold | In either unit: values under 30 are read as mmol/L (3.9 or 70; 10 or 180) |
+| Layout | Tall graph with the fields in a column on the right (default), or Classic with the fields in a row below the graph |
 | Time colour | White, minutes by glucose, or the whole time by glucose |
 | Data fields 1–4, Bottom field | Steps, elevation gain, Body Battery, temperature and heart rate by default; also IOB, COB, basal, battery, calories, VO2 max, stress, floors and weekly active minutes |
 
