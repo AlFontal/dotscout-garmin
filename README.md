@@ -115,7 +115,7 @@ Set in the Connect IQ phone app (store installs) or baked in by `tools/make-loca
 
 - **Fonts**: the watch's own vector fonts, so text renders smoothly at any size. Bionic Bold, Garmin's sporty face, sets the numbers; Roboto Condensed sets the labels. Watches without Bionic fall back face by face (`NUM_FACES` in `source/CgmFaceView.mc`): the FR970 and FR570 use Roboto Condensed Bold, and the Venu 3, which has no bold Latin face, uses Roboto Regular restamped 1–2 px as a faux bold. Fallback faces are scaled so their digits are as tall as Bionic's, so the layout is identical. Connect IQ's `getVectorFont` size is the full line height (ascender + descender), so the face converts from em sizes and places text by its baseline.
 - **Time**: drawn as a 5 × 7 dot matrix of anti-aliased circles (`GLYPHS` in `source/CgmFaceView.mc`), on the same dot language as the graph and the divider.
-- **Icons**: vector shapes in `source/Icons.mc`. Less common fields use white bitmap fallbacks that `tools/gen_assets.py` draws with Pillow (no third-party icon set or license).
+- **Icons**: vector shapes on a 28-unit grid in `source/Icons.mc`, so every field's icon scales to its slot with the same stroke weight (no third-party icon set or license). `tools/gen_assets.py` draws only the launcher and store icons.
 
 Store images and screenshots are in `docs/store/`, including `all-devices.png`, the face on each supported watch.
 
@@ -138,7 +138,7 @@ Vertical spacing follows the time's 13 px dot pitch, with extra room around the 
 
 To add one:
 
-1. Add an id to the enum in `source/Fields.mc` (append it so stored settings keep their meaning) and a case in `Fields.value()` returning `[icon key, value, unit]`. Draw the icon in `source/Icons.mc`, or add a bitmap fallback to `ICONS` in `tools/gen_assets.py` (it writes `drawables.xml`).
+1. Add an id to the enum in `source/Fields.mc` (append it so stored settings keep their meaning) and a case in `Fields.value()` returning `[icon key, value, unit]`. Draw its icon in `source/Icons.mc`.
 2. Add a `<listEntry>` for it under each of the five field settings in `resources/settings/settings.xml`.
 3. Add its name to `resources/strings/strings.xml`.
 

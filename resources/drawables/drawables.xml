@@ -1,11 +1,3 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png"/>
-    <bitmap id="IconCalories" filename="icons/calories.png" automaticPalette="false"/>
-    <bitmap id="IconTemperature" filename="icons/temperature.png" automaticPalette="false"/>
-    <bitmap id="IconIob" filename="icons/iob.png" automaticPalette="false"/>
-    <bitmap id="IconCob" filename="icons/cob.png" automaticPalette="false"/>
-    <bitmap id="IconBasal" filename="icons/basal.png" automaticPalette="false"/>
-    <bitmap id="IconVo2max" filename="icons/vo2max.png" automaticPalette="false"/>
-    <bitmap id="IconStress" filename="icons/stress.png" automaticPalette="false"/>
-    <bitmap id="IconActivemin" filename="icons/activemin.png" automaticPalette="false"/>
 </drawables>

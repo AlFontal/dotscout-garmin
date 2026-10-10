@@ -1,13 +1,10 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
-import Toybox.WatchUi;
 
 // Icons drawn as anti-aliased vector shapes at their final size, which renders much cleaner on
-// the watch than small bitmaps. Shapes are defined on a 28-unit grid. Less common fields fall
-// back to the white bitmaps from tools/gen_assets.py, tinted.
+// the watch than small bitmaps. Shapes are defined on a 28-unit grid.
 module Icons {
-    var _bitmaps as Dictionary = {};
     var _heart as Array? = null;
     // Colour behind the icon, for cut-outs such as the phone's screen.
     var cutout as Number = 0x000000;
@@ -70,9 +67,71 @@ module Icons {
         } else if (key == :arrowDown) {
             lines(dc, x, y, k, [[14, 3], [14, 23]], stroke(k, 3.2));
             lines(dc, x, y, k, [[6, 15], [14, 23.5], [22, 15]], stroke(k, 3.2));
-        } else {
-            bitmap(dc, key, x, y, size, color);
+        } else if (key == :iob) {
+            teardrop(dc, x, y, k, 14, 17.5, 8.5, 14, 1.5);
+        } else if (key == :cob) {
+            // A cookie with four cut-out chips.
+            dc.fillCircle(x + 14 * k, y + 14 * k, 11.5 * k);
+            dc.setColor(cutout, Graphics.COLOR_TRANSPARENT);
+            var chips = [[10, 10], [17.5, 8.5], [16.5, 17.5], [8.5, 17]];
+            for (var i = 0; i < chips.size(); i++) {
+                dc.fillCircle(x + chips[i][0] * k, y + chips[i][1] * k, 1.9 * k);
+            }
+        } else if (key == :basal) {
+            // A stepped basal profile, square-cornered so the joins don't bead.
+            var b = [[2, 22], [8, 22], [8, 9], [15, 9], [15, 16], [21, 16], [21, 5], [26, 5]];
+            for (var i = 1; i < b.size(); i++) {
+                var x0 = (b[i - 1][0] < b[i][0]) ? b[i - 1][0] : b[i][0];
+                var y0 = (b[i - 1][1] < b[i][1]) ? b[i - 1][1] : b[i][1];
+                var w = (b[i][0] - b[i - 1][0]).abs();
+                var h = (b[i][1] - b[i - 1][1]).abs();
+                poly(dc, x, y, k, [[x0 - 1.3, y0 - 1.3], [x0 + w + 1.3, y0 - 1.3], [x0 + w + 1.3, y0 + h + 1.3], [x0 - 1.3, y0 + h + 1.3]]);
+            }
+        } else if (key == :vo2max) {
+            // Lungs: two lobes, and a windpipe that branches into them.
+            dc.fillRoundedRectangle(x + 2.5 * k, y + 9 * k, 9.5 * k, 17 * k, 4.5 * k);
+            dc.fillRoundedRectangle(x + 16 * k, y + 9 * k, 9.5 * k, 17 * k, 4.5 * k);
+            poly(dc, x, y, k, [[12.8, 1.5], [15.2, 1.5], [15.2, 10], [18, 13.5], [16.2, 15], [14, 12.3], [11.8, 15], [10, 13.5], [12.8, 10]]);
+        } else if (key == :stress) {
+            // Two waves, the second one calmer, filled as one band offset along the curve's normal.
+            var n = 25;
+            var band = new [2 * n];
+            for (var i = 0; i < n; i++) {
+                var amp = (i < 12) ? 8 : 5;
+                var a = 2 * Math.PI * i / 12;
+                var dx = 1.0;
+                var dy = -amp * 2 * Math.PI / 12 * Math.cos(a);
+                var len = Math.sqrt(dx * dx + dy * dy);
+                var px = 2 + i;
+                var py = 14 - amp * Math.sin(a);
+                band[i] = [px - 1.3 * dy / len, py + 1.3 * dx / len];
+                band[2 * n - 1 - i] = [px + 1.3 * dy / len, py - 1.3 * dx / len];
+            }
+            poly(dc, x, y, k, band);
+        } else if (key == :activeMin) {
+            // A stopwatch.
+            dc.setPenWidth(stroke(k, 2.6));
+            dc.drawCircle(x + 14 * k, y + 16 * k, 9.5 * k);
+            poly(dc, x, y, k, [[11, 1], [17, 1], [17, 3.5], [15.2, 3.5], [15.2, 6.5], [12.8, 6.5], [12.8, 3.5], [11, 3.5]]);
+            lines(dc, x, y, k, [[14, 10], [14, 16], [18.5, 18.5]], stroke(k, 2.6));
+        } else if (key == :calories) {
+            // A flame with a side tongue and a cut-out inner flame.
+            teardrop(dc, x, y, k, 14, 17, 9.5, 16, 1);
+            poly(dc, x, y, k, [[6, 15], [5, 7.5], [10.5, 12]]);
+            dc.setColor(cutout, Graphics.COLOR_TRANSPARENT);
+            teardrop(dc, x, y, k, 14, 21, 4, 13, 13);
         }
+    }
+
+    // A round base centred on (cx, cy) with radius r, drawn up to a point at (tx, ty).
+    function teardrop(dc as Dc, x as Numeric, y as Numeric, k as Float, cx as Numeric, cy as Numeric, r as Numeric, tx as Numeric, ty as Numeric) as Void {
+        var pts = new [18];
+        pts[0] = [tx, ty];
+        for (var i = 0; i <= 16; i++) {
+            var t = Math.PI * i / 16;
+            pts[i + 1] = [cx + r * Math.cos(t), cy + r * Math.sin(t)];
+        }
+        poly(dc, x, y, k, pts);
     }
 
     // Smooth parametric heart centred on (cx, cy), `size` px wide.
@@ -128,31 +187,5 @@ module Icons {
 
     function ellipse(dc as Dc, x as Numeric, y as Numeric, k as Float, cx as Numeric, cy as Numeric, rx as Numeric, ry as Numeric) as Void {
         dc.fillEllipse(x + cx * k, y + cy * k, rx * k, ry * k);
-    }
-
-    function bitmap(dc as Dc, key as Symbol, x as Numeric, y as Numeric, size as Numeric, color as Number) as Void {
-        var ids = {
-            :calories => Rez.Drawables.IconCalories, :temperature => Rez.Drawables.IconTemperature,
-            :iob => Rez.Drawables.IconIob, :cob => Rez.Drawables.IconCob, :basal => Rez.Drawables.IconBasal,
-            :vo2max => Rez.Drawables.IconVo2max, :stress => Rez.Drawables.IconStress,
-            :activeMin => Rez.Drawables.IconActivemin
-        };
-        var id = ids[key];
-        if (id == null) {
-            return;
-        }
-        var b = _bitmaps[key];
-        if (b == null) {
-            b = WatchUi.loadResource(id as ResourceId);
-            _bitmaps[key] = b;
-        }
-        var bmp = b as BitmapResource;
-        var bx = x + (size - bmp.getWidth()) / 2;
-        var by = y + (size - bmp.getHeight()) / 2;
-        if (dc has :drawBitmap2) {
-            dc.drawBitmap2(bx, by, bmp, {:tintColor => color});
-        } else {
-            dc.drawBitmap(bx, by, bmp);
-        }
     }
 }
