@@ -55,6 +55,7 @@ class CgmFaceView extends WatchUi.WatchFace {
         :heart => [:num, 32, 32],
         :delta => [:num, 26, 26],
         :deltaG => [:num, 34, 34],
+        :stat => [:num, 30, 30],
         :small => [:label, 16, 18],
         :date => [:label, 15, 17],
         :dateL => [:label, 24, 24],
@@ -280,9 +281,23 @@ class CgmFaceView extends WatchUi.WatchFace {
         var slots = ["Stat1", "Stat2", "Stat3", "Stat4b"];
         var defaults = [Fields.STEPS, Fields.ELEVATION_GAIN, Fields.BODY_BATTERY, Fields.TEMPERATURE];
         var xs = [104, 186, 268, 350];
+        var tall = tallGraph();
         for (var i = 0; i < 4; i++) {
             var v = Fields.value(CgmConfig.getNumber(slots[i], defaults[i]), cgm);
             if (v == null) {
+                continue;
+            }
+            if (tall) {
+                // A column beside the tall graph, one field per row, caps spanning the graph's
+                // height: icon, then the value at 30 px with its unit.
+                var base = TALL_TOP + 19 + i * 30;
+                icon(dc, v[0] as Symbol, 268, base - 20, 20, Palette.MUTE);
+                var s = v[1] as String;
+                textAt(dc, :stat, 296, base, s, Palette.FG, Graphics.TEXT_JUSTIFY_LEFT);
+                var u = v[2] as String;
+                if (u.length() > 0) {
+                    textAt(dc, :minmax, 296 + width(dc, :stat, s) + 2, base, u, Palette.MUTE, Graphics.TEXT_JUSTIFY_LEFT);
+                }
                 continue;
             }
             var cx = xs[i];
@@ -304,6 +319,13 @@ class CgmFaceView extends WatchUi.WatchFace {
         var px = 227 - pw / 2 + _ox;
         var py = 264 + _oy;
         var ph = 40;
+        if (tallGraph()) {
+            // Two and a half times as tall, on the left, so changes read as real slopes.
+            pw = 196;
+            px = 56 + _ox;
+            py = TALL_TOP + _oy;
+            ph = TALL_HEIGHT;
+        }
         if (!_aod) {
             // Dotted 70 and 180 lines, in the same dot language as the time.
             var top = plotYh(CgmConfig.highMgdl(), py, ph);
@@ -347,6 +369,14 @@ class CgmFaceView extends WatchUi.WatchFace {
             dc.setColor(Palette.dot(CgmModel.state(lastV, stale), _aod), Graphics.COLOR_TRANSPARENT);
             dc.fillCircle(lastX, lastY, 3.5);
         }
+    }
+
+    // The "Tall graph" layout setting; always-on keeps the classic graph.
+    private const TALL_TOP = 262;
+    private const TALL_HEIGHT = 106;
+
+    private function tallGraph() as Boolean {
+        return !_aod && CgmConfig.getNumber("Layout", 0) == 1;
     }
 
     private function plotYh(mgdl as Number, top as Number, h as Number) as Number {

@@ -26,6 +26,10 @@
     <string id="HighTitle">High threshold</string>
     <string id="ThresholdPrompt">In mg/dL (70) or mmol/L (3.9)</string>
 
+    <string id="LayoutTitle">Layout</string>
+    <string id="LayoutClassic">Classic</string>
+    <string id="LayoutTall">Tall graph, fields on the right</string>
+
     <string id="TimeColorTitle">Time colour</string>
     <string id="TimeWhite">White</string>
     <string id="TimeMinutes">Minutes by glucose</string>

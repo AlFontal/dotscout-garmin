@@ -26,6 +26,12 @@
         <setting propertyKey="@Properties.High" title="@Strings.HighTitle" prompt="@Strings.ThresholdPrompt">
             <settingConfig type="numeric" min="5" max="400"/>
         </setting>
+        <setting propertyKey="@Properties.Layout" title="@Strings.LayoutTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.LayoutClassic</listEntry>
+                <listEntry value="1">@Strings.LayoutTall</listEntry>
+            </settingConfig>
+        </setting>
         <setting propertyKey="@Properties.TimeColor" title="@Strings.TimeColorTitle">
             <settingConfig type="list">
                 <listEntry value="0">@Strings.TimeWhite</listEntry>
