@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
-    <iq:application id="5790f34666be426c941e9189df09e418" type="watchface" name="@Strings.AppName" entry="CgmFaceApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="3.2.0" version="1.0.1">
+    <iq:application id="5790f34666be426c941e9189df09e418" type="watchface" name="@Strings.AppName" entry="CgmFaceApp" launcherIcon="@Drawables.LauncherIcon" minApiLevel="3.2.0" version="1.0.2">
         <iq:products>
             <iq:product id="d2mach2"/>
             <iq:product id="d2mach2pro"/>
