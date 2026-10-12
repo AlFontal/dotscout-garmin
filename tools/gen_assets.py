@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the launcher icon and the 512 px store icon.
+"""Generate the launcher icon and the 512 px dot-grid brand mark (docs/store/icon-512.png).
 
 Data field icons are vector shapes in source/Icons.mc, and text uses the watch's own vector
 fonts, so there are no other assets.

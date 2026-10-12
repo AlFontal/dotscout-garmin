@@ -10,7 +10,7 @@ A Connect IQ watch face for round AMOLED Garmin watches that puts continuous glu
 
 Colour only ever means glucose: green in range, amber high, orange very high, red low, grey when the reading is over 15 minutes old. Everything else is white or grey.
 
-![Dotscout on the ten supported watches](docs/store/all-devices.png)
+![Dotscout on fifteen of the supported watches](docs/store/all-devices.png)
 
 ## Supported watches
 
@@ -123,10 +123,10 @@ Set in the Connect IQ phone app (store installs) or baked in by `tools/make-loca
 
 - **Fonts**: the watch's own vector fonts, so text renders smoothly at any size. Bionic Bold, Garmin's sporty face, sets the numbers; Roboto Condensed sets the labels. Watches without Bionic fall back face by face (`NUM_FACES` in `source/CgmFaceView.mc`): the FR970 and FR570 use Roboto Condensed Bold, and the Venu 3, which has no bold Latin face, uses Roboto Regular restamped 1–2 px as a faux bold. Fallback faces are scaled so their digits are as tall as Bionic's, so the layout is identical. Connect IQ's `getVectorFont` size is the full line height (ascender + descender), so the face converts from em sizes and places text by its baseline.
 - **Time**: drawn as a 5 × 7 dot matrix of anti-aliased circles (`GLYPHS` in `source/CgmFaceView.mc`), on the same dot language as the graph and the divider.
-- **Icons**: vector shapes on a 28-unit grid in `source/Icons.mc`, so every field's icon scales to its slot with the same stroke weight (no third-party icon set or license). `tools/gen_assets.py` draws only the launcher and store icons.
+- **Icons**: vector shapes on a 28-unit grid in `source/Icons.mc`, so every field's icon scales to its slot with the same stroke weight (no third-party icon set or license). `tools/gen_assets.py` draws only the launcher icon and the brand mark.
 - **Languages**: English and Spanish. Every text the face draws or the settings show comes from `resources/strings/strings.xml`, with the Spanish in `resources-spa/strings/strings.xml`. The background service reports errors as a kind (`CgmConfig.ERR_*`) and the face turns it into text in the watch's language.
 
-Store images and screenshots are in `docs/store/`, including `all-devices.png`, the face on each supported watch.
+Store images and screenshots are in `docs/store/`, including `all-devices.png`, the face on each supported watch. `python3 tools/store_shots.py` renders them all in the simulator from a patched copy of the project (fixed time, demo data, sample field values) and crops each watch screen using the SDK's display rectangle; `docs/store-listing.md` says which image goes where.
 
 ## Layout
 
