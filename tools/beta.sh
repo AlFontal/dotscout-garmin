@@ -66,6 +66,11 @@ cat <<MSG
 Built $OUT ($(du -h "$OUT" | cut -f1 | tr -d ' ')), version $VERSION, $RELEASE.
 Next:
   1. Sign in on the page that just opened.
-  2. First time: Upload an App, drop the .iq, tick "Beta app". Later: open the app and upload a new version.
-  3. On the phone: Connect IQ app > My Device > Dotscout > Install, then set the URL and token in its settings.
 MSG
+if [ "$RELEASE" = "beta" ]; then
+    echo '  2. First time: Upload an App, drop the .iq, tick "Beta app". Later: open the app and upload a new version.'
+    echo '  3. On the phone: Connect IQ app > My Device > Dotscout > Install, then set the URL and token in its settings.'
+else
+    echo '  2. Open the public app in the developer dashboard and choose Upload New Version (don'"'"'t tick "Beta app").'
+    echo "  3. Tag the release so CI attaches it to GitHub: git tag v$VERSION && git push origin v$VERSION"
+fi
