@@ -325,7 +325,8 @@ class CgmFaceView extends WatchUi.WatchFace {
         }
     }
 
-    // 3 h of dots between dotted 70 and 180 lines, centred under the glucose row.
+    // 3 h of dots between the dotted low and high lines. The scale fits the readings and always
+    // includes both lines, so a 300 mg/dL spike or a 45 low is drawn at its real height.
     private function drawGraphOpen(dc as Dc, cgm as Dictionary?, now as Number) as Void {
         // Always-on is taller and narrower, so its corners clear the round edge at every shift.
         var pw = _aod ? 280 : 300;
@@ -339,10 +340,14 @@ class CgmFaceView extends WatchUi.WatchFace {
             py = TALL_TOP + _oy;
             ph = TALL_HEIGHT;
         }
+        var hist = (cgm != null) ? cgm["hist"] as Array : [];
+        var range = graphRange(hist);
+        var lo = range[0];
+        var hi = range[1];
         if (!_aod) {
-            // Dotted 70 and 180 lines, in the same dot language as the time.
-            var top = plotYh(CgmConfig.highMgdl(), py, ph);
-            var bottom = plotYh(CgmConfig.lowMgdl(), py, ph);
+            // Dotted low and high lines, in the same dot language as the time.
+            var top = plotYh(CgmConfig.highMgdl(), py, ph, lo, hi);
+            var bottom = plotYh(CgmConfig.lowMgdl(), py, ph, lo, hi);
             dc.setColor(Palette.GUIDE, Graphics.COLOR_TRANSPARENT);
             for (var gx = px + 3; gx < px + pw - 3; gx += 6) {
                 dc.fillCircle(sc(gx), sc(top), 1);
@@ -352,16 +357,17 @@ class CgmFaceView extends WatchUi.WatchFace {
         if (cgm == null) {
             return;
         }
-        var hist = cgm["hist"] as Array;
         var n = hist.size();
         var shift = (now - (cgm["t"] as Number)) / CgmConfig.SLOT_SECONDS;
         var stale = isStale(cgm, now);
         var x0 = px + 3;
         var x1 = px + pw - 5;
         var step = (x1 - x0).toFloat() / (n - 1);
-        var lastX = -1.0;
-        var lastY = 0;
-        var lastV = 0;
+        // As big as the spacing allows without the dots running together.
+        var r = step * 0.46;
+        if (r > 3.4) {
+            r = 3.4;
+        }
         for (var i = 0; i < n; i++) {
             var v = hist[i];
             if (v == null) {
@@ -371,17 +377,28 @@ class CgmFaceView extends WatchUi.WatchFace {
             if (x < x0) {
                 continue;
             }
-            var y = plotYh(v as Number, py, ph);
+            var y = plotYh(v as Number, py, ph, lo, hi);
             dc.setColor(Palette.dot(CgmModel.state(v as Number, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(sc(x), sc(y), sc(2.1));
-            lastX = x;
-            lastY = y;
-            lastV = v as Number;
+            dc.fillCircle(sc(x), sc(y), sc(r));
         }
-        if (lastX >= 0) {
-            dc.setColor(Palette.dot(CgmModel.state(lastV, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(sc(lastX), sc(lastY), sc(4.0));
+    }
+
+    // [low, high] mg/dL for the graph: the readings and both threshold lines, 10% padding, rounded
+    // out to 10 mg/dL so the scale doesn't shift with every reading.
+    private function graphRange(hist as Array) as Array {
+        var lo = CgmConfig.lowMgdl();
+        var hi = CgmConfig.highMgdl();
+        for (var i = 0; i < hist.size(); i++) {
+            var v = hist[i];
+            if (v != null) {
+                if ((v as Number) < lo) { lo = v as Number; }
+                if ((v as Number) > hi) { hi = v as Number; }
+            }
         }
+        var pad = (hi - lo) / 10;
+        lo = (lo - pad) / 10 * 10;
+        hi = (hi + pad + 9) / 10 * 10;
+        return [(lo < 20) ? 20 : lo, hi];
     }
 
     // The "Tall graph" layout setting; always-on keeps the classic graph.
@@ -392,9 +409,9 @@ class CgmFaceView extends WatchUi.WatchFace {
         return !_aod && CgmConfig.getNumber("Layout", 1) == 1;
     }
 
-    private function plotYh(mgdl as Number, top as Number, h as Number) as Number {
-        var v = (mgdl < 50) ? 50 : ((mgdl > 230) ? 230 : mgdl);
-        return top + h - h * (v - 50) / 180;
+    private function plotYh(mgdl as Number, top as Number, h as Number, lo as Number, hi as Number) as Number {
+        var v = (mgdl < lo) ? lo : ((mgdl > hi) ? hi : mgdl);
+        return top + h - h * (v - lo) / (hi - lo);
     }
 
     // ---- primitives ------------------------------------------------------------------------

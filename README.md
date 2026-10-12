@@ -135,7 +135,7 @@ Store images and screenshots are in `docs/store/`, including `all-devices.png`, 
 - Status row: Bluetooth (only while the phone is connected) and battery, then the date.
 - The time as a dot matrix, with a dotted divider below it.
 - Glucose row: reading age (clock and minutes, e.g. 12') at the value's top left, the value, a trend arrow drawn with the digits' stroke (flat, 45°, vertical, or double above 3 mg/dL per minute), then the change. The change is vertically centred on the value and uses the same glucose-state colour.
-- The 3 h graph: one dot per 5-minute reading on a 50–230 mg/dL scale between dotted low and high lines, coloured by range, with the latest reading as a larger dot.
+- The 3 h graph: one dot per 5-minute reading between dotted low and high lines, coloured by range. Its scale fits the readings and always includes both lines, with 10% padding rounded out to 10 mg/dL, so a spike or a deep low is drawn at its real height.
 - Four data fields: a grey icon, the value and a muted unit.
 - The bottom field, heart rate by default, whose heart beats while the watch is awake.
 
