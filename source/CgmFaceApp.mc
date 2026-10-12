@@ -100,10 +100,17 @@ class CgmFaceApp extends Application.AppBase {
         var cad = storedCadence();
         if (cad >= 240) {
             var aligned = readingTime + CgmConfig.SLOT_SECONDS + FETCH_DELAY_SECONDS;
-            while (aligned < next) {
+            // The run that fetched this reading started about FETCH_DELAY_SECONDS after it, so the
+            // next reading's slot falls a second or so before Connect IQ's 5-minute minimum. That
+            // is still the next reading: run at the minimum rather than a whole slot later. Each run
+            // then lands a second later; after about 5 h the lag passes a minute and it waits one
+            // slot to realign.
+            while (aligned + 60 < next) {
                 aligned += CgmConfig.SLOT_SECONDS;
             }
-            next = aligned;
+            if (aligned > next) {
+                next = aligned;
+            }
         }
         Background.registerForTemporalEvent(new Time.Moment(next));
     }
