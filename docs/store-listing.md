@@ -11,7 +11,8 @@ Text and images for the Connect IQ Store page, in English and Spanish. The image
 
 ## Title
 
-Dotscout: Nightscout CGM face
+- English: Dotscout: CGM Watch Face
+- Spanish: Dotscout: Esfera de glucosa
 
 ## Description (English)
 
