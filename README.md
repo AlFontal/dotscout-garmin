@@ -1,6 +1,6 @@
 # Dotscout
 
-A Connect IQ watch face for 454 × 454 AMOLED Garmin watches that puts continuous glucose data next to the time:
+A Connect IQ watch face for round AMOLED Garmin watches that puts continuous glucose data next to the time:
 
 - the time as a large dot matrix, white or tinted by your glucose range
 - glucose coloured by range, with a trend arrow, the 5-minute change and the reading age
@@ -14,7 +14,14 @@ Colour only ever means glucose: green in range, amber high, orange very high, re
 
 ## Supported watches
 
-Forerunner 965, 970 and 570 (47 mm), fēnix 8 (47/51 mm, AMOLED) and fēnix 8 Pro, epix Pro (Gen 2) 51 mm, Venu 3, Venu 4 45 mm, D2 Mach 2 and D2 Mach 2 Pro, plus the models that share those device profiles (tactix 7/8, quatix 8, D2 Mach 1 Pro, D2 Air X15). All are 454 × 454 AMOLED.
+Round AMOLED watches with Garmin's vector fonts, 29 device profiles in `manifest.xml`:
+
+- **454 × 454**: Forerunner 965, 970 and 570 (47 mm), fēnix 8 (47/51 mm, AMOLED) and fēnix 8 Pro, epix Pro (Gen 2) 51 mm, Venu 3, Venu 4 45 mm, D2 Mach 2 and D2 Mach 2 Pro, plus the models that share those device profiles (tactix 7/8, quatix 8, D2 Mach 1 Pro, D2 Air X15).
+- **416 × 416**: Forerunner 265, epix (Gen 2), epix Pro (Gen 2) 47 mm, fēnix 8 43 mm, fēnix E and D2 Mach 1.
+- **390 × 390**: Forerunner 165, 170, 70 and 570 (42 mm), Venu 3S, Venu 4 41 mm, vívoactive 6, epix Pro (Gen 2) 42 mm, MARQ (Gen 2) and MARQ Aviator.
+- **360 × 360**: Forerunner 265S.
+
+The layout is drawn on the 454 px design and scaled to the screen where it is drawn, so every size gets the same face. MIP watches (fēnix 7, Forerunner 255/955, Instinct) are not supported: their colours and resolution need their own design.
 
 ## Build and run
 

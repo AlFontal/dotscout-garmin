@@ -18,12 +18,17 @@ import Toybox.WatchUi;
 //
 // Always-on keeps the time as smaller dots, the glucose and the graph, and drifts a few pixels
 // each minute against burn-in. Coordinates are Figma-style: text is placed by its text-box top.
-// The older D and E drawing functions below are unused while this is a proposal.
+//
+// Everything is laid out in design units on the 454 px design and scaled to the screen only
+// where it is drawn (sc), so smaller round screens get the same face. Text widths come back in
+// design units; at 454 px the scale is exactly 1 and every coordinate stays a whole number.
 class CgmFaceView extends WatchUi.WatchFace {
     private var _sleeping as Boolean = false;
     private var _aod as Boolean = false;
     private var _ox as Number = 0;
     private var _oy as Number = 0;
+    // Screen pixels per design unit.
+    private var _s as Float = 1.0;
 
     private var _fonts as Dictionary = {};
     // Minute of the last fetch-schedule check (see CgmFaceApp.ensureScheduled).
@@ -65,15 +70,16 @@ class CgmFaceView extends WatchUi.WatchFace {
         :bpm => [:labelReg, 14, 16]
     };
 
-    // Each entry becomes [font, Figma-top offset, ascent px, faux-bold px].
+    // Each entry becomes [font, Figma-top offset, ascent, faux-bold], in screen pixels.
     function onLayout(dc as Dc) as Void {
+        _s = dc.getWidth() / 454.0;
         var keys = FONT_SPECS.keys();
         for (var i = 0; i < keys.size(); i++) {
             var spec = FONT_SPECS[keys[i]] as Array;
             var role = spec[0] as Symbol;
             var faces = (role == :num) ? NUM_FACES : ((role == :label) ? LABEL_FACES : LABEL_REG_FACES);
             var f = null;
-            var em = (spec[1] as Number).toFloat();
+            var em = (spec[1] as Number) * _s;
             var m = [1.2, 0.93, 0.73];
             var bold = 0;
             if (Graphics has :getVectorFont) {
@@ -94,7 +100,7 @@ class CgmFaceView extends WatchUi.WatchFace {
                 f = Graphics.FONT_SMALL;
             }
             // Figma's 100% line height puts the baseline 0.792 x size below the box top.
-            var baseline = Math.round(0.792 * (spec[2] as Number)).toNumber();
+            var baseline = Math.round(0.792 * (spec[2] as Number) * _s).toNumber();
             var ascent = Math.round((m[1] as Float) * em).toNumber();
             _fonts[keys[i]] = [f, baseline - ascent, ascent, bold];
         }
@@ -198,8 +204,8 @@ class CgmFaceView extends WatchUi.WatchFace {
         // Colon: two dots in the middle column, rows 2 and 4.
         var cx = x + 12 * PITCH + _ox;
         dc.setColor(_aod ? Palette.AOD_MUTE : Palette.MUTE, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(cx, y + 2 * PITCH + _oy, _aod ? 3 : 5);
-        dc.fillCircle(cx, y + 4 * PITCH + _oy, _aod ? 3 : 5);
+        dc.fillCircle(sc(cx), sc(y + 2 * PITCH + _oy), sc(_aod ? 3 : 5));
+        dc.fillCircle(sc(cx), sc(y + 4 * PITCH + _oy), sc(_aod ? 3 : 5));
     }
 
     // One digit with its top-left dot centred on (x, y); always-on draws smaller dots.
@@ -215,7 +221,7 @@ class CgmFaceView extends WatchUi.WatchFace {
                 var py = y + r * PITCH;
                 if (((bits >> (4 - col)) & 1) == 1) {
                     dc.setColor(c, Graphics.COLOR_TRANSPARENT);
-                    dc.fillCircle(px, py, _aod ? 3.2 : 4.9);
+                    dc.fillCircle(sc(px), sc(py), sc(_aod ? 3.2 : 4.9));
                 }
             }
         }
@@ -278,7 +284,7 @@ class CgmFaceView extends WatchUi.WatchFace {
         for (var k = -n; k <= n; k++) {
             var t = k.abs().toFloat() / (n + 1);
             dc.setColor(Palette.blend(Palette.RULE, 0x000000, 1.0 - t * t), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(227 + k * PITCH, y, 1.6);
+            dc.fillCircle(sc(227 + k * PITCH), sc(y), sc(1.6));
         }
     }
 
@@ -339,8 +345,8 @@ class CgmFaceView extends WatchUi.WatchFace {
             var bottom = plotYh(CgmConfig.lowMgdl(), py, ph);
             dc.setColor(Palette.GUIDE, Graphics.COLOR_TRANSPARENT);
             for (var gx = px + 3; gx < px + pw - 3; gx += 6) {
-                dc.fillCircle(gx, top, 1);
-                dc.fillCircle(gx, bottom, 1);
+                dc.fillCircle(sc(gx), sc(top), 1);
+                dc.fillCircle(sc(gx), sc(bottom), 1);
             }
         }
         if (cgm == null) {
@@ -367,14 +373,14 @@ class CgmFaceView extends WatchUi.WatchFace {
             }
             var y = plotYh(v as Number, py, ph);
             dc.setColor(Palette.dot(CgmModel.state(v as Number, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(x, y, 2.1);
+            dc.fillCircle(sc(x), sc(y), sc(2.1));
             lastX = x;
             lastY = y;
             lastV = v as Number;
         }
         if (lastX >= 0) {
             dc.setColor(Palette.dot(CgmModel.state(lastV, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(lastX, lastY, 4.0);
+            dc.fillCircle(sc(lastX), sc(lastY), sc(4.0));
         }
     }
 
@@ -400,17 +406,17 @@ class CgmFaceView extends WatchUi.WatchFace {
     // Text at a Figma text-box top.
     private function text(dc as Dc, key as Symbol, x as Number, top as Number, s as String, color as Number, justify as Number) as Void {
         var f = _fonts[key] as Array;
-        stamp(dc, f, x + _ox, top + (f[1] as Number) + _oy, s, color, justify);
+        stamp(dc, f, sc(x + _ox), sc(top + _oy) + (f[1] as Number), s, color, justify);
     }
 
     // Text with its baseline at y.
     private function textAt(dc as Dc, key as Symbol, x as Number, y as Number, s as String, color as Number, justify as Number) as Void {
         var f = _fonts[key] as Array;
-        stamp(dc, f, x + _ox, y - (f[2] as Number) + _oy, s, color, justify);
+        stamp(dc, f, sc(x + _ox), sc(y + _oy) - (f[2] as Number), s, color, justify);
     }
 
     // Draws the text once, or restamped 1-2 px to the right for a faux-bold fallback face.
-    private function stamp(dc as Dc, f as Array, x as Number, y as Number, s as String, color as Number, justify as Number) as Void {
+    private function stamp(dc as Dc, f as Array, x as Numeric, y as Numeric, s as String, color as Number, justify as Number) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         var bold = f[3] as Number;
         for (var i = 0; i <= bold; i++) {
@@ -418,13 +424,20 @@ class CgmFaceView extends WatchUi.WatchFace {
         }
     }
 
+    // Text width in design units.
     private function width(dc as Dc, key as Symbol, s as String) as Number {
-        return dc.getTextWidthInPixels(s, font(key)) + ((_fonts[key] as Array)[3] as Number);
+        var w = dc.getTextWidthInPixels(s, font(key)) + ((_fonts[key] as Array)[3] as Number);
+        return (_s == 1.0) ? w : Math.round(w / _s).toNumber();
+    }
+
+    // Design units to screen pixels; unchanged on the 454 px design.
+    private function sc(v as Numeric) as Numeric {
+        return (_s == 1.0) ? v : v * _s;
     }
 
     // Vector icon `size` px square, top-left at (x, y).
     private function icon(dc as Dc, key as Symbol, x as Numeric, y as Numeric, size as Number, color as Number) as Void {
-        Icons.draw(dc, key, x + _ox, y + _oy, size, color);
+        Icons.draw(dc, key, sc(x + _ox), sc(y + _oy), sc(size), color);
     }
 
     private function isStale(cgm as Dictionary, now as Number) as Boolean {
@@ -455,12 +468,12 @@ class CgmFaceView extends WatchUi.WatchFace {
         var bx = x + _ox;
         var by = 20 + _oy;
         dc.setColor(mute, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(2);
-        dc.drawRoundedRectangle(bx, by, 26, 15, 4);
-        dc.fillRectangle(bx + 26, by + 5, 3, 5);
+        dc.setPenWidth(sc(2) < 1 ? 1 : Math.round(sc(2)).toNumber());
+        dc.drawRoundedRectangle(sc(bx), sc(by), sc(26), sc(15), sc(4));
+        dc.fillRectangle(sc(bx + 26), sc(by + 5), sc(3), sc(5));
         var fill = (22 * pct / 100).toNumber();
         if (fill > 0) {
-            dc.fillRectangle(bx + 2, by + 2, fill, 11);
+            dc.fillRectangle(sc(bx + 2), sc(by + 2), sc(fill), sc(11));
         }
         textAt(dc, :status, x + 37, 35, label, mute, Graphics.TEXT_JUSTIFY_LEFT);
     }
@@ -502,12 +515,14 @@ class CgmFaceView extends WatchUi.WatchFace {
         var shape = [[-e, -w / 2], [e - 2 * d - w / 2, -w / 2], [e - h - d, -h + d], [e - h, -h], [e, 0],
             [e - h, h], [e - h - d, h - d], [e - 2 * d - w / 2, w / 2], [-e, w / 2]];
         var r = Math.toRadians(angle);
-        var c = Math.cos(r) * scale;
-        var sn = Math.sin(r) * scale;
+        var c = Math.cos(r) * scale * _s;
+        var sn = Math.sin(r) * scale * _s;
+        var x = sc(cx);
+        var y = sc(cy);
         var pts = new [shape.size()];
         for (var i = 0; i < shape.size(); i++) {
             var p = shape[i];
-            pts[i] = [cx + p[0] * c + p[1] * sn, cy - p[0] * sn + p[1] * c];
+            pts[i] = [x + p[0] * c + p[1] * sn, y - p[0] * sn + p[1] * c];
         }
         dc.fillPolygon(pts);
     }
