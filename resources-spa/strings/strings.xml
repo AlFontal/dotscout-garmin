@@ -1,0 +1,69 @@
+<strings>
+    <string id="AppName">Dotscout</string>
+
+    <string id="NoData">Sin datos</string>
+    <string id="ErrNoUrl">Configura tu URL de Nightscout</string>
+    <string id="ErrNoReadings">Aún no hay lecturas</string>
+    <string id="ErrPhone">Teléfono no conectado</string>
+    <string id="ErrTimeout">Tiempo de espera agotado</string>
+    <string id="ErrTooLarge">Respuesta demasiado grande</string>
+    <string id="ErrToken">Token rechazado</string>
+    <string id="ErrNotFound">No encontrado: revisa la URL</string>
+    <string id="ErrOther">Error</string>
+
+    <string id="DataSourceTitle">Fuente de datos</string>
+    <string id="SrcMock">Demo (datos simulados)</string>
+    <string id="SrcNightscout">Nightscout</string>
+    <string id="SrcXdrip">xDrip+ (teléfono, local)</string>
+    <string id="SrcAaps">AndroidAPS (teléfono, local)</string>
+
+    <string id="ScenarioTitle">Escenario simulado</string>
+    <string id="ScSteady">Estable en rango</string>
+    <string id="ScDay">Día realista</string>
+    <string id="ScRising">Subida rápida tras comer</string>
+    <string id="ScFalling">Bajando hacia una hipo</string>
+    <string id="ScHigh">Alta sostenida</string>
+    <string id="ScStale">Sin lectura desde hace 25 min</string>
+    <string id="ScNoData">Sin datos</string>
+
+    <string id="NsUrlTitle">URL de Nightscout</string>
+    <string id="NsTokenTitle">Token de Nightscout</string>
+
+    <string id="UnitsTitle">Unidades</string>
+    <string id="UnitsMgdl">mg/dL</string>
+    <string id="UnitsMmol">mmol/L</string>
+    <string id="LowTitle">Umbral bajo</string>
+    <string id="HighTitle">Umbral alto</string>
+    <string id="ThresholdPrompt">En mg/dL (70) o mmol/L (3.9)</string>
+
+    <string id="LayoutTitle">Diseño</string>
+    <string id="LayoutClassic">Clásico</string>
+    <string id="LayoutTall">Gráfica alta, datos a la derecha</string>
+
+    <string id="TimeColorTitle">Color de la hora</string>
+    <string id="TimeWhite">Blanco</string>
+    <string id="TimeMinutes">Minutos según la glucosa</string>
+    <string id="TimeAll">Toda la hora según la glucosa</string>
+
+    <string id="SlotLeftTitle">Dato 1 (izquierda)</string>
+    <string id="SlotRightTitle">Dato 2</string>
+    <string id="SlotBottom1Title">Dato 3</string>
+    <string id="SlotBottom2Title">Dato 4 (derecha)</string>
+    <string id="SlotBottom3Title">Dato inferior</string>
+
+    <string id="FieldNone">Ninguno</string>
+    <string id="FieldIob">Insulina activa</string>
+    <string id="FieldCob">Carbohidratos activos</string>
+    <string id="FieldBasal">Basal</string>
+    <string id="FieldHeart">Frecuencia cardiaca</string>
+    <string id="FieldBattery">Batería</string>
+    <string id="FieldSteps">Pasos</string>
+    <string id="FieldBodyBattery">Body Battery</string>
+    <string id="FieldCalories">Calorías</string>
+    <string id="FieldVo2Max">VO2 máx.</string>
+    <string id="FieldTemperature">Temperatura</string>
+    <string id="FieldStress">Estrés</string>
+    <string id="FieldFloors">Pisos subidos</string>
+    <string id="FieldActiveMin">Minutos de intensidad (semana)</string>
+    <string id="FieldElevationGain">Ascenso (hoy)</string>
+</strings>

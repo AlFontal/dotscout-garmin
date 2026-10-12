@@ -7,6 +7,16 @@ import Toybox.Math;
 module CgmConfig {
     const STORAGE_KEY = "cgm";
     const ERROR_KEY = "cgmErr";
+    // Why a fetch failed, sent by the background service as [kind, code]; the face turns the kind
+    // into text from the string resources.
+    const ERR_NO_URL = 1;
+    const ERR_NO_READINGS = 2;
+    const ERR_PHONE = 3;
+    const ERR_TIMEOUT = 4;
+    const ERR_TOO_LARGE = 5;
+    const ERR_TOKEN = 6;
+    const ERR_NOT_FOUND = 7;
+    const ERR_OTHER = 8;
     // Cached Nightscout v3 JWT as [token, expiry epoch s].
     const JWT_KEY = "nsJwt";
     // 36 slots x 5 min = 3 h of history.

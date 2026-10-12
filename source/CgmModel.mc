@@ -1,6 +1,7 @@
 import Toybox.Application;
 import Toybox.Lang;
 import Toybox.Time;
+import Toybox.WatchUi;
 
 // Foreground view of the current CGM state, whichever source it comes from.
 module CgmModel {
@@ -15,9 +16,29 @@ module CgmModel {
         return (d instanceof Dictionary) ? d : null;
     }
 
+    // The last fetch error as text in the watch's language, or null.
     function lastError() as String? {
         var e = Application.Storage.getValue(CgmConfig.ERROR_KEY);
-        return (e instanceof String) ? e : null;
+        if (e instanceof String) {
+            return e;    // stored by versions before 1.1
+        }
+        if (!(e instanceof Array) || e.size() != 2) {
+            return null;
+        }
+        var kind = e[0];
+        var code = e[1];
+        var ids = {
+            CgmConfig.ERR_NO_URL => Rez.Strings.ErrNoUrl,
+            CgmConfig.ERR_NO_READINGS => Rez.Strings.ErrNoReadings,
+            CgmConfig.ERR_PHONE => Rez.Strings.ErrPhone,
+            CgmConfig.ERR_TIMEOUT => Rez.Strings.ErrTimeout,
+            CgmConfig.ERR_TOO_LARGE => Rez.Strings.ErrTooLarge,
+            CgmConfig.ERR_TOKEN => Rez.Strings.ErrToken,
+            CgmConfig.ERR_NOT_FOUND => Rez.Strings.ErrNotFound
+        };
+        var id = ids[kind];
+        var label = WatchUi.loadResource((id != null) ? id : Rez.Strings.ErrOther) as String;
+        return (kind == CgmConfig.ERR_TOKEN || kind == CgmConfig.ERR_OTHER) ? label + " " + code : label;
     }
 
     // Nightscout-style direction name. Uses the source's own direction when it sent one,

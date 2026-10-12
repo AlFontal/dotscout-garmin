@@ -1,6 +1,16 @@
 <strings>
     <string id="AppName">Dotscout</string>
 
+    <string id="NoData">No data</string>
+    <string id="ErrNoUrl">Set your Nightscout URL</string>
+    <string id="ErrNoReadings">No readings yet</string>
+    <string id="ErrPhone">Phone not connected</string>
+    <string id="ErrTimeout">Request timed out</string>
+    <string id="ErrTooLarge">Response too large</string>
+    <string id="ErrToken">Token refused</string>
+    <string id="ErrNotFound">Not found: check the URL</string>
+    <string id="ErrOther">Error</string>
+
     <string id="DataSourceTitle">Data source</string>
     <string id="SrcMock">Demo (simulated data)</string>
     <string id="SrcNightscout">Nightscout</string>

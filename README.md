@@ -112,11 +112,12 @@ Set in the Connect IQ phone app (store installs) or baked in by `tools/make-loca
 
 12/24-hour time and always-on follow the watch's own settings. Very high starts at 250 mg/dL, and a reading turns grey after 15 minutes.
 
-## Fonts and icons
+## Fonts, icons and languages
 
 - **Fonts**: the watch's own vector fonts, so text renders smoothly at any size. Bionic Bold, Garmin's sporty face, sets the numbers; Roboto Condensed sets the labels. Watches without Bionic fall back face by face (`NUM_FACES` in `source/CgmFaceView.mc`): the FR970 and FR570 use Roboto Condensed Bold, and the Venu 3, which has no bold Latin face, uses Roboto Regular restamped 1–2 px as a faux bold. Fallback faces are scaled so their digits are as tall as Bionic's, so the layout is identical. Connect IQ's `getVectorFont` size is the full line height (ascender + descender), so the face converts from em sizes and places text by its baseline.
 - **Time**: drawn as a 5 × 7 dot matrix of anti-aliased circles (`GLYPHS` in `source/CgmFaceView.mc`), on the same dot language as the graph and the divider.
 - **Icons**: vector shapes on a 28-unit grid in `source/Icons.mc`, so every field's icon scales to its slot with the same stroke weight (no third-party icon set or license). `tools/gen_assets.py` draws only the launcher and store icons.
+- **Languages**: English and Spanish. Every text the face draws or the settings show comes from `resources/strings/strings.xml`, with the Spanish in `resources-spa/strings/strings.xml`. The background service reports errors as a kind (`CgmConfig.ERR_*`) and the face turns it into text in the watch's language.
 
 Store images and screenshots are in `docs/store/`, including `all-devices.png`, the face on each supported watch.
 
@@ -141,7 +142,7 @@ To add one:
 
 1. Add an id to the enum in `source/Fields.mc` (append it so stored settings keep their meaning) and a case in `Fields.value()` returning `[icon key, value, unit]`. Draw its icon in `source/Icons.mc`.
 2. Add a `<listEntry>` for it under each of the five field settings in `resources/settings/settings.xml`.
-3. Add its name to `resources/strings/strings.xml`.
+3. Add its name to `resources/strings/strings.xml` and `resources-spa/strings/strings.xml`.
 
 ## Continuous integration and releases
 

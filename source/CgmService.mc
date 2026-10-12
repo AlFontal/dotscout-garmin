@@ -18,7 +18,8 @@ import Toybox.Time;
 // When that history is mostly empty (first install, long gap) the service backfills 3 h from the
 // Nightscout v3 API, projected to date+sgv: 180 one-minute entries are ~6 KB there, while the
 // same from v1 is ~55 KB and fails in the 64 KB background with -402/-403.
-// On failure it exits with {"err" => short label} so the face can say why there is no data.
+// On failure it exits with {"err" => [kind, code]} (CgmConfig.ERR_*) so the face can say, in the
+// watch's language, why there is no data.
 (:background)
 class CgmServiceDelegate extends System.ServiceDelegate {
     // Enough to cover a missed run plus the delta even with 1-minute readings.
@@ -44,7 +45,7 @@ class CgmServiceDelegate extends System.ServiceDelegate {
     function onTemporalEvent() as Void {
         var url = CgmConfig.entriesUrl();
         if (url == null) {
-            Background.exit({"err" => "Set your Nightscout URL"});
+            Background.exit({"err" => [CgmConfig.ERR_NO_URL, 0]});
             return;
         }
         // xDrip+ and AAPS ignore unknown params; brief_mode trims xDrip's payload, which matters
@@ -62,12 +63,12 @@ class CgmServiceDelegate extends System.ServiceDelegate {
     // A top-level JSON array arrives as an Array at runtime even though the API type omits it.
     function onEntries(code as Number, data as Dictionary or String or PersistedContent.Iterator or Null) as Void {
         if (code != 200) {
-            Background.exit({"err" => errorLabel(code)});
+            Background.exit({"err" => [errorKind(code), code]});
             return;
         }
         var entries = data as Object?;
         if (!(entries instanceof Array) || entries.size() == 0) {
-            Background.exit({"err" => "No readings yet"});
+            Background.exit({"err" => [CgmConfig.ERR_NO_READINGS, 0]});
             return;
         }
         _result = parseEntries(entries);
@@ -329,12 +330,12 @@ class CgmServiceDelegate extends System.ServiceDelegate {
         return (v.toLong() / 1000l).toNumber();
     }
 
-    private function errorLabel(code) as String {
-        if (code == Communications.BLE_CONNECTION_UNAVAILABLE) { return "Phone not connected"; }
-        if (code == Communications.NETWORK_REQUEST_TIMED_OUT || code == Communications.BLE_HOST_TIMEOUT) { return "Request timed out"; }
-        if (code == Communications.NETWORK_RESPONSE_TOO_LARGE) { return "Response too large"; }
-        if (code == 401 || code == 403) { return "Token refused (" + code + ")"; }
-        if (code == 404) { return "Not found: check the URL"; }
-        return "Error " + code;
+    private function errorKind(code) as Number {
+        if (code == Communications.BLE_CONNECTION_UNAVAILABLE) { return CgmConfig.ERR_PHONE; }
+        if (code == Communications.NETWORK_REQUEST_TIMED_OUT || code == Communications.BLE_HOST_TIMEOUT) { return CgmConfig.ERR_TIMEOUT; }
+        if (code == Communications.NETWORK_RESPONSE_TOO_LARGE) { return CgmConfig.ERR_TOO_LARGE; }
+        if (code == 401 || code == 403) { return CgmConfig.ERR_TOKEN; }
+        if (code == 404) { return CgmConfig.ERR_NOT_FOUND; }
+        return CgmConfig.ERR_OTHER;
     }
 }

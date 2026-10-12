@@ -41,7 +41,7 @@ class CgmFaceApp extends Application.AppBase {
                 Application.Storage.deleteValue(CgmConfig.ERROR_KEY);
                 readingTime = data["t"];
             } else {
-                Application.Storage.setValue(CgmConfig.ERROR_KEY, err.toString());
+                Application.Storage.setValue(CgmConfig.ERROR_KEY, err);
             }
         }
         scheduleFetch(readingTime);

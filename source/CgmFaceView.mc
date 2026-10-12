@@ -231,7 +231,7 @@ class CgmFaceView extends WatchUi.WatchFace {
     private function drawGlucoseFree(dc as Dc, cgm as Dictionary?, now as Number) as Void {
         var mute = _aod ? Palette.AOD_MUTE : Palette.MUTE;
         if (cgm == null) {
-            text(dc, :dateL, 227, 206, "No data", mute, Graphics.TEXT_JUSTIFY_CENTER);
+            text(dc, :dateL, 227, 206, WatchUi.loadResource(Rez.Strings.NoData) as String, mute, Graphics.TEXT_JUSTIFY_CENTER);
             var err = CgmModel.lastError();
             if (err != null) {
                 text(dc, :date, 227, 232, err, mute, Graphics.TEXT_JUSTIFY_CENTER);
