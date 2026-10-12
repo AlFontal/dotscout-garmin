@@ -65,7 +65,7 @@ class CgmFaceView extends WatchUi.WatchFace {
         :age => [:label, 19, 21],
         :small => [:label, 16, 18],
         :date => [:label, 15, 17],
-        :dateL => [:label, 28, 28],
+        :dateL => [:num, 32, 28],    // the date in the numbers' face; 32 px matches a 28 px label's caps
         :minmax => [:label, 14, 16],
         :bpm => [:labelReg, 14, 16]
     };
