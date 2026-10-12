@@ -7,7 +7,7 @@ SDK_VERSION="${SDK_VERSION:-9.1.0}"
 CLI_VERSION="${CLI_VERSION:-v0.8.4}"
 curl -fsSL https://raw.githubusercontent.com/lindell/connect-iq-sdk-manager-cli/v0.8.4/install.sh | sh -s -- -b "$HOME/.local/bin" "$CLI_VERSION"
 export PATH="$HOME/.local/bin:$PATH"
-connect-iq-sdk-manager agreement accept --acceptance-hash="$CIQ_AGREEMENT_HASH"
+connect-iq-sdk-manager agreement accept --agreement-hash="$CIQ_AGREEMENT_HASH"
 connect-iq-sdk-manager login
 connect-iq-sdk-manager sdk set "$SDK_VERSION"
 connect-iq-sdk-manager device download --manifest=manifest.xml
