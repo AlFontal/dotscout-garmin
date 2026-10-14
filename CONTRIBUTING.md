@@ -78,7 +78,7 @@ Credits: the xDrip+ Local Web Services documentation, and the setup notes in swi
 
 Colour only ever means glucose; everything else is white or grey. Vertical spacing follows the time's 13 px dot pitch, with extra room around the large glucose digits. All colours live in `Palette` in `source/CgmModel.mc`.
 
-**Always-on** keeps the date, the time as smaller dots, the glucose row and a taller, narrower graph, centred in the space below the time. Data fields, heart rate and the divider are hidden, and the face shifts a few pixels each minute against burn-in; the graph's corners clear the round edge at every shift. It measures about 7% lit pixels in the simulator, within the AMOLED budget of about 10%.
+**Always-on** keeps only the time as smaller dots, the glucose row and a taller, narrower graph, centred in the space below the time. The status row, date, data fields, heart rate and the divider are hidden, and the face shifts a few pixels each minute against burn-in; the graph's corners clear the round edge at every shift. It measures under 8% lit pixels in the simulator, within the AMOLED budget of about 10%.
 
 ### Screen sizes
 

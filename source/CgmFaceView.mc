@@ -16,7 +16,7 @@ import Toybox.WatchUi;
 //   four stats: tinted icon, value and unit
 //   heart rate
 //
-// Always-on keeps the time as smaller dots, the glucose and the graph, and drifts a few pixels
+// Always-on keeps only the time as smaller dots, the glucose and the graph, and drifts a few pixels
 // each minute against burn-in. Coordinates are Figma-style: text is placed by its text-box top.
 //
 // Everything is laid out in design units on the 454 px design and scaled to the screen only
@@ -140,7 +140,9 @@ class CgmFaceView extends WatchUi.WatchFace {
         var cgm = CgmModel.current(now);
 
         // "F · Dots": everything on black, the time as a dot matrix that echoes the dot graph.
-        drawStatus(dc, settings);
+        if (!_aod) {
+            drawStatus(dc, settings);
+        }
         drawTimeDots(dc, cgm, now);
         rule(dc, 186, 156);
         // Always-on has no stats or heart rate, so the glucose row and graph move down to sit
@@ -150,7 +152,6 @@ class CgmFaceView extends WatchUi.WatchFace {
         drawGlucoseFree(dc, cgm, now);
         drawGraphOpen(dc, cgm, now);
         _oy -= lower;
-        // Always-on keeps only the time, glucose and graph.
         if (!_aod) {
             drawStatsOpen(dc, cgm);
             drawBottom(dc, CgmConfig.getNumber("BottomField", Fields.HEART), cgm);
@@ -175,7 +176,7 @@ class CgmFaceView extends WatchUi.WatchFace {
         [0x0E, 0x11, 0x11, 0x0F, 0x01, 0x02, 0x0C]
     ];
     private const PITCH = 13;
-    // Date above an HH:MM dot matrix, 25 columns wide. The TimeColor setting can tint the minutes
+    // Date (not in always-on) above an HH:MM dot matrix, 25 columns wide. The TimeColor setting can tint the minutes
     // (1) or the whole time (2) by the glucose range; colour on this face only ever means glucose.
     private function drawTimeDots(dc as Dc, cgm as Dictionary?, now as Number) as Void {
         var clock = System.getClockTime();
@@ -184,9 +185,11 @@ class CgmFaceView extends WatchUi.WatchFace {
             hour = hour % 12;
             if (hour == 0) { hour = 12; }
         }
-        var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
-        var date = Lang.format("$1$ $2$ $3$", [info.day_of_week, info.day, info.month]);
-        textAt(dc, :dateL, 227, 72, date, _aod ? Palette.AOD_MUTE : Palette.SOFT, Graphics.TEXT_JUSTIFY_CENTER);
+        if (!_aod) {
+            var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+            var date = Lang.format("$1$ $2$ $3$", [info.day_of_week, info.day, info.month]);
+            textAt(dc, :dateL, 227, 72, date, Palette.SOFT, Graphics.TEXT_JUSTIFY_CENTER);
+        }
 
         var x = 227 - 12 * PITCH;
         var y = 92;
