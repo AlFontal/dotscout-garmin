@@ -1,0 +1,7 @@
+<resources>
+    <properties>
+        <!-- The 260 px MIP screens start with two fields, steps and Body Battery. -->
+        <property id="Stat2" type="number">0</property>
+        <property id="Stat4b" type="number">0</property>
+    </properties>
+</resources>

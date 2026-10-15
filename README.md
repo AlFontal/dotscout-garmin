@@ -7,7 +7,7 @@ A Garmin watch face that puts your continuous glucose reading next to the time, 
 - Glucose coloured by range, with a trend arrow, the 5-minute change and how old the reading is.
 - A 3-hour graph between your low and high lines, scaled to fit, so a spike or a deep low shows at its real height.
 - The time as a large dot matrix, white or tinted by your glucose range.
-- Four data fields and a bottom field: steps, elevation gain, Body Battery, temperature and heart rate by default, or insulin and carbs on board and basal rate from your loop.
+- Four data fields and a bottom field: steps, elevation gain, Body Battery, temperature and heart rate by default, or insulin and carbs on board and basal rate from your loop. Every field is yours to choose in the settings. MIP watches start with two, steps and Body Battery; fields set to None close up and the rest spread out.
 - A dim always-on mode that stays within AMOLED burn-in limits.
 - mg/dL or mmol/L, in English or Spanish.
 
@@ -49,7 +49,12 @@ Round AMOLED watches:
 
 ![Dotscout on fifteen of the supported watches](docs/store/all-devices.png)
 
-MIP watches such as the fēnix 7, Forerunner 255/955 and Instinct aren't supported yet.
+Round 260 px MIP watches, with colours and Garmin's built-in fonts picked for those screens:
+
+- **Forerunner** 255, 255 Music and 955
+- **fēnix** 7, fēnix 7 Pro (with and without Wi-Fi), quatix 7 and fēnix 8 Solar 47 mm
+
+Other MIP sizes (Forerunner 255S, fēnix 7S and 7X, Enduro) and the Instinct aren't supported yet.
 
 ## Troubleshooting
 

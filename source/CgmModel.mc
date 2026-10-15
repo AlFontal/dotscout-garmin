@@ -90,16 +90,31 @@ module CgmModel {
 
 // Every colour the face draws. Colour is kept for glucose: everything else is white or grey.
 module Palette {
-    const FG = 0xF2F4F7;           // text and the time
-    const MUTE = 0x8FA3AB;         // icons, units, secondary text
-    const SOFT = 0xC9CED8;         // the date
-    const GUIDE = 0x3A4A50;        // dotted 70 and 180 lines
-    const RULE = 0x5E6E75;         // dotted section divider, at its centre
+    (:amoled) const FG = 0xF2F4F7;           // text and the time
+    (:amoled) const MUTE = 0x8FA3AB;         // icons, units, secondary text
+    (:amoled) const SOFT = 0xC9CED8;         // the date
+    (:amoled) const GUIDE = 0x3A4A50;        // dotted 70 and 180 lines
+    (:amoled) const RULE = 0x5E6E75;         // dotted section divider, at its centre
     // Glucose states on black
-    const GREEN = 0x34D399;
-    const DOT_HIGH = 0xF5B547;
-    const DOT_VERY_HIGH = 0xFF8A50;
-    const DOT_LOW = 0xFF5E6C;
+    (:amoled) const GREEN = 0x34D399;
+    (:amoled) const DOT_HIGH = 0xF5B547;
+    (:amoled) const DOT_VERY_HIGH = 0xFF8A50;
+    (:amoled) const DOT_LOW = 0xFF5E6C;
+
+    // MIP screens show 64 colours, each channel 0x00, 0x55, 0xAA or 0xFF. The AMOLED colours
+    // would snap to their nearest neighbours (the green to a dull teal), so these are picked
+    // from that set, bright enough to read in sunlight and with the glucose states far apart.
+    (:amoled) const MIP = false;
+    (:mip) const MIP = true;
+    (:mip) const FG = 0xFFFFFF;
+    (:mip) const MUTE = 0xAAAAAA;
+    (:mip) const SOFT = 0xFFFFFF;
+    (:mip) const GUIDE = 0x555555;
+    (:mip) const RULE = 0xAAAAAA;
+    (:mip) const GREEN = 0x55FF55;
+    (:mip) const DOT_HIGH = 0xFFAA00;
+    (:mip) const DOT_VERY_HIGH = 0xFF5500;
+    (:mip) const DOT_LOW = 0xFF0055;
 
     // Always-on: dimmed
     const AOD_TIME = 0xB8BEC9;
