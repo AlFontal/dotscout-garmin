@@ -335,7 +335,8 @@ class CgmFaceView extends WatchUi.WatchFace {
             defaults = [Fields.STEPS, Fields.NONE, Fields.BODY_BATTERY, Fields.NONE];
         }
         var tall = tallGraph();
-        // Empty slots close up: the fields that remain are centred as a group.
+        // Empty slots close up: the fields that remain are centred as a group, spread further
+        // apart the fewer there are (four sit 82 apart in a row, 30 in the column).
         var shown = [];
         for (var i = 0; i < 4; i++) {
             var v = Fields.value(CgmConfig.getNumber(slots[i], defaults[i]), cgm);
@@ -344,12 +345,14 @@ class CgmFaceView extends WatchUi.WatchFace {
             }
         }
         var n = shown.size();
+        var gapX = 82 + (4 - n) * 20;
+        var gapY = 30 + (4 - n) * 8;
         for (var i = 0; i < n; i++) {
             var v = shown[i] as Array;
             if (tall) {
                 // A column beside the tall graph, one field per row, caps spanning the graph's
                 // height: icon, then the value at 30 px with its unit.
-                var base = TALL_TOP + 19 + i * 30 + (4 - n) * 15;
+                var base = TALL_TOP + 19 + 45 + (2 * i - n + 1) * gapY / 2;
                 icon(dc, v[0] as Symbol, 280, base - 20, 20, Palette.MUTE);
                 var s = v[1] as String;
                 textAt(dc, :stat, 308, base, s, Palette.FG, Graphics.TEXT_JUSTIFY_LEFT);
@@ -359,7 +362,7 @@ class CgmFaceView extends WatchUi.WatchFace {
                 }
                 continue;
             }
-            var cx = 227 + (2 * i - n + 1) * 41;
+            var cx = 227 + (2 * i - n + 1) * gapX / 2;
             icon(dc, v[0] as Symbol, cx - 11, 327, 22, Palette.MUTE);
             var value = v[1] as String;
             var unit = v[2] as String;

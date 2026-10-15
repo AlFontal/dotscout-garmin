@@ -7,7 +7,7 @@ A Garmin watch face that puts your continuous glucose reading next to the time, 
 - Glucose coloured by range, with a trend arrow, the 5-minute change and how old the reading is.
 - A 3-hour graph between your low and high lines, scaled to fit, so a spike or a deep low shows at its real height.
 - The time as a large dot matrix, white or tinted by your glucose range.
-- Four data fields and a bottom field: steps, elevation gain, Body Battery, temperature and heart rate by default, or insulin and carbs on board and basal rate from your loop. MIP watches start with two fields, steps and Body Battery; fields set to None close up.
+- Four data fields and a bottom field: steps, elevation gain, Body Battery, temperature and heart rate by default, or insulin and carbs on board and basal rate from your loop. Every field is yours to choose in the settings. MIP watches start with two, steps and Body Battery; fields set to None close up and the rest spread out.
 - A dim always-on mode that stays within AMOLED burn-in limits.
 - mg/dL or mmol/L, in English or Spanish.
 
