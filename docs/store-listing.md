@@ -27,6 +27,7 @@ The watch face provides the following features:
 - An always-on mode with a taller graph that stays within the AMOLED burn-in limits.
 - mg/dL or mmol/L, in English or Spanish.
 - For round AMOLED watches: Forerunner, fēnix, epix, Venu, vívoactive, MARQ and D2 models from 360 to 454 px.
+- And for 260 px MIP watches: Forerunner 255 and 955, fēnix 7 and fēnix 8 Solar 47 mm.
 
 Works with any CGM that uploads to Nightscout, such as Dexcom or FreeStyle Libre, and with xDrip+ (local web server) and AndroidAPS (Garmin plugin). Readings arrive through the Garmin Connect app on your phone, updated every 5 minutes.
 
@@ -48,6 +49,7 @@ La esfera muestra:
 - Un modo siempre activo con una gráfica más alta, dentro de los límites contra el quemado de las pantallas AMOLED.
 - mg/dL o mmol/L, en español o en inglés.
 - Para relojes redondos AMOLED: modelos Forerunner, fēnix, epix, Venu, vívoactive, MARQ y D2 de 360 a 454 px.
+- Y para relojes MIP de 260 px: Forerunner 255 y 955, fēnix 7 y fēnix 8 Solar 47 mm.
 
 Funciona con cualquier MCG que suba a Nightscout, como Dexcom o FreeStyle Libre, y con xDrip+ (servidor web local) y AndroidAPS (plugin de Garmin). Las lecturas llegan cada 5 minutos a través de la app Garmin Connect de tu teléfono.
 

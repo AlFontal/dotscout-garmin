@@ -1,1 +1,19 @@
 project.manifest = manifest.xml
+
+# MIP watches get their own colours (Palette in source/CgmModel.mc) and start with two data
+# fields (resources-mip); everything else is AMOLED.
+base.excludeAnnotations = mip
+fr255.excludeAnnotations = amoled
+fr255.resourcePath = $(fr255.resourcePath);resources-mip
+fr255m.excludeAnnotations = amoled
+fr255m.resourcePath = $(fr255m.resourcePath);resources-mip
+fr955.excludeAnnotations = amoled
+fr955.resourcePath = $(fr955.resourcePath);resources-mip
+fenix7.excludeAnnotations = amoled
+fenix7.resourcePath = $(fenix7.resourcePath);resources-mip
+fenix7pro.excludeAnnotations = amoled
+fenix7pro.resourcePath = $(fenix7pro.resourcePath);resources-mip
+fenix7pronowifi.excludeAnnotations = amoled
+fenix7pronowifi.resourcePath = $(fenix7pronowifi.resourcePath);resources-mip
+fenix8solar47mm.excludeAnnotations = amoled
+fenix8solar47mm.resourcePath = $(fenix8solar47mm.resourcePath);resources-mip

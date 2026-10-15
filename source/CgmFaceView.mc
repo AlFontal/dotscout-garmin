@@ -70,6 +70,26 @@ class CgmFaceView extends WatchUi.WatchFace {
         :bpm => [:labelReg, 14, 16]
     };
 
+    // Built-in fonts for watches without vector fonts, sized on the 260 px MIP screens. The
+    // glucose is digits only, so it can use a number font; everything else needs letters. The
+    // stats take the first font in which four digits fit their slot (STAT_FIT design units),
+    // since some watches draw the glance font wider.
+    private const SYSTEM_FONTS = {
+        :glucose => Graphics.FONT_NUMBER_MILD,
+        :heart => Graphics.FONT_TINY,
+        :delta => [Graphics.FONT_GLANCE, Graphics.FONT_XTINY],
+        :deltaG => Graphics.FONT_TINY,
+        :stat => [Graphics.FONT_GLANCE, Graphics.FONT_XTINY],
+        :status => Graphics.FONT_XTINY,
+        :age => Graphics.FONT_XTINY,
+        :small => Graphics.FONT_XTINY,
+        :date => Graphics.FONT_XTINY,
+        :dateL => Graphics.FONT_TINY,
+        :minmax => Graphics.FONT_XTINY,
+        :bpm => Graphics.FONT_XTINY
+    };
+    private const STAT_FIT = 72;
+
     // Each entry becomes [font, Figma-top offset, ascent, faux-bold], in screen pixels.
     function onLayout(dc as Dc) as Void {
         _s = dc.getWidth() / 454.0;
@@ -82,7 +102,7 @@ class CgmFaceView extends WatchUi.WatchFace {
             var em = (spec[1] as Number) * _s;
             var m = [1.2, 0.93, 0.73];
             var bold = 0;
-            if (Graphics has :getVectorFont) {
+            if ((Graphics has :getVectorFont) && !Palette.MIP) {
                 for (var k = 0; k < faces.size() && f == null; k++) {
                     m = FACE_METRICS[faces[k]] as Array;
                     var e = (role == :num) ? em * BIONIC_DIGIT / (m[2] as Float) : em;
@@ -96,12 +116,26 @@ class CgmFaceView extends WatchUi.WatchFace {
                     }
                 }
             }
+            var ascent = Math.round((m[1] as Float) * em).toNumber();
             if (f == null) {
-                f = Graphics.FONT_SMALL;
+                // MIP watches, and any without vector fonts: the closest built-in font, placed by
+                // its own ascent. Vector text this small is hard to read on MIP; the built-in
+                // fonts are drawn for these screens, and nothing goes below the extra-tiny size.
+                f = SYSTEM_FONTS[keys[i]];
+                if (f instanceof Array) {
+                    var fits = f as Array;
+                    f = fits[fits.size() - 1];
+                    for (var k = fits.size() - 1; k >= 0; k--) {
+                        if (dc.getTextWidthInPixels("8432", fits[k]) <= STAT_FIT * _s) {
+                            f = fits[k];
+                        }
+                    }
+                }
+                ascent = Graphics.getFontAscent(f);
+                bold = 0;
             }
             // Figma's 100% line height puts the baseline 0.792 x size below the box top.
             var baseline = Math.round(0.792 * (spec[2] as Number) * _s).toNumber();
-            var ascent = Math.round((m[1] as Float) * em).toNumber();
             _fonts[keys[i]] = [f, baseline - ascent, ascent, bold];
         }
     }
@@ -287,25 +321,35 @@ class CgmFaceView extends WatchUi.WatchFace {
         for (var k = -n; k <= n; k++) {
             var t = k.abs().toFloat() / (n + 1);
             dc.setColor(Palette.blend(Palette.RULE, 0x000000, 1.0 - t * t), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(sc(227 + k * PITCH), sc(y), sc(1.6));
+            spot(dc, sc(227 + k * PITCH), sc(y), sc(1.6));
         }
     }
 
     // Four stats in an open row: muted icon, value and muted unit below.
     private function drawStatsOpen(dc as Dc, cgm as Dictionary?) as Void {
         var slots = ["Stat1", "Stat2", "Stat3", "Stat4b"];
+        // As in properties.xml; the MIP screens start with two (resources-mip). An if rather
+        // than ?:, which crashes the release optimizer once Palette.MIP is folded to a constant.
         var defaults = [Fields.STEPS, Fields.ELEVATION_GAIN, Fields.BODY_BATTERY, Fields.TEMPERATURE];
-        var xs = [104, 186, 268, 350];
+        if (Palette.MIP) {
+            defaults = [Fields.STEPS, Fields.NONE, Fields.BODY_BATTERY, Fields.NONE];
+        }
         var tall = tallGraph();
+        // Empty slots close up: the fields that remain are centred as a group.
+        var shown = [];
         for (var i = 0; i < 4; i++) {
             var v = Fields.value(CgmConfig.getNumber(slots[i], defaults[i]), cgm);
-            if (v == null) {
-                continue;
+            if (v != null) {
+                shown.add(v);
             }
+        }
+        var n = shown.size();
+        for (var i = 0; i < n; i++) {
+            var v = shown[i] as Array;
             if (tall) {
                 // A column beside the tall graph, one field per row, caps spanning the graph's
                 // height: icon, then the value at 30 px with its unit.
-                var base = TALL_TOP + 19 + i * 30;
+                var base = TALL_TOP + 19 + i * 30 + (4 - n) * 15;
                 icon(dc, v[0] as Symbol, 280, base - 20, 20, Palette.MUTE);
                 var s = v[1] as String;
                 textAt(dc, :stat, 308, base, s, Palette.FG, Graphics.TEXT_JUSTIFY_LEFT);
@@ -315,7 +359,7 @@ class CgmFaceView extends WatchUi.WatchFace {
                 }
                 continue;
             }
-            var cx = xs[i];
+            var cx = 227 + (2 * i - n + 1) * 41;
             icon(dc, v[0] as Symbol, cx - 11, 327, 22, Palette.MUTE);
             var value = v[1] as String;
             var unit = v[2] as String;
@@ -352,9 +396,16 @@ class CgmFaceView extends WatchUi.WatchFace {
             var top = plotYh(CgmConfig.highMgdl(), py, ph, lo, hi);
             var bottom = plotYh(CgmConfig.lowMgdl(), py, ph, lo, hi);
             dc.setColor(Palette.GUIDE, Graphics.COLOR_TRANSPARENT);
-            for (var gx = px + 3; gx < px + pw - 3; gx += 6) {
-                dc.fillCircle(sc(gx), sc(top), 1);
-                dc.fillCircle(sc(gx), sc(bottom), 1);
+            if (Palette.MIP) {
+                // Dots this small break up on MIP; solid lines read better.
+                dc.setPenWidth(1);
+                dc.drawLine(sc(px + 3), sc(top), sc(px + pw - 3), sc(top));
+                dc.drawLine(sc(px + 3), sc(bottom), sc(px + pw - 3), sc(bottom));
+            } else {
+                for (var gx = px + 3; gx < px + pw - 3; gx += 6) {
+                    spot(dc, sc(gx), sc(top), 1);
+                    spot(dc, sc(gx), sc(bottom), 1);
+                }
             }
         }
         if (cgm == null) {
@@ -371,9 +422,22 @@ class CgmFaceView extends WatchUi.WatchFace {
         if (r > 3.4) {
             r = 3.4;
         }
+        // Bigger dots on the small MIP screens. Where readings sit closer than 4.5 px (the tall
+        // graph) only every other one is drawn, counting back from the latest, so each dot
+        // stays a round, separate dot.
+        var stride = 1;
+        if (Palette.MIP) {
+            if (step * _s < 4.5) {
+                stride = 2;
+            }
+            r = step * stride * 0.62;
+            if (r * _s > 2.6) {
+                r = 2.6 / _s;
+            }
+        }
         for (var i = 0; i < n; i++) {
             var v = hist[i];
-            if (v == null) {
+            if (v == null || (n - 1 - i) % stride != 0) {
                 continue;
             }
             var x = x1 - (n - 1 - i + shift) * step;
@@ -382,7 +446,7 @@ class CgmFaceView extends WatchUi.WatchFace {
             }
             var y = plotYh(v as Number, py, ph, lo, hi);
             dc.setColor(Palette.dot(CgmModel.state(v as Number, stale), _aod), Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(sc(x), sc(y), sc(r));
+            spot(dc, sc(x), sc(y), sc(r));
         }
     }
 
@@ -453,6 +517,17 @@ class CgmFaceView extends WatchUi.WatchFace {
     // Design units to screen pixels; unchanged on the 454 px design.
     private function sc(v as Numeric) as Numeric {
         return (_s == 1.0) ? v : v * _s;
+    }
+
+    // A small dot of radius r screen px. Without anti-aliasing (MIP) a circle under about 2.5 px
+    // comes out as a plus sign, so those are drawn as squares instead.
+    private function spot(dc as Dc, x as Numeric, y as Numeric, r as Numeric) as Void {
+        if (Palette.MIP && r < 2.5) {
+            var side = (2 * r < 2) ? 2 : (2 * r).toNumber();
+            dc.fillRectangle(Math.round(x - side / 2.0).toNumber(), Math.round(y - side / 2.0).toNumber(), side, side);
+        } else {
+            dc.fillCircle(x, y, r);
+        }
     }
 
     // Vector icon `size` px square, top-left at (x, y).
