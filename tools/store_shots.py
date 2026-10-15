@@ -90,7 +90,7 @@ def build(work, device, scenario, layout, tint, units, age=2, aod=False, hhmm=(1
     """Copy the project into `work`, patch it into a fixed demo state, and build it."""
     shutil.rmtree(work, ignore_errors=True)
     os.makedirs(work)
-    for name in ("manifest.xml", "monkey.jungle", "source", "resources"):
+    for name in ("manifest.xml", "monkey.jungle", "source", "resources", "resources-mip"):
         src = os.path.join(ROOT, name)
         (shutil.copytree if os.path.isdir(src) else shutil.copy)(src, os.path.join(work, name))
     src = os.path.join(work, "source")
@@ -182,6 +182,10 @@ def capture(prg, device, swift, shot):
             if subprocess.run(["screencapture", "-x", "-o", "-l", str(wins[0][0]), shot]).returncode != 0:
                 continue
             im = Image.open(shot).convert("RGB")
+            if im.width == image.width:
+                # A window on a non-Retina screen captures at 1x; double it so the crops below
+                # work the same, and the watch screen comes back at its native size unchanged.
+                im = im.resize((2 * im.width, 2 * im.height), Image.NEAREST)
             if im.width == 2 * image.width and drawn(screen(im, sim)):
                 return im, sim, image
     raise RuntimeError("%s never drew on the %s" % (os.path.basename(prg), name))
