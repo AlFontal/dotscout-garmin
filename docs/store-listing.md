@@ -4,7 +4,7 @@ Text and images for the Connect IQ Store page, in English and Spanish. The image
 
 - `store-icon-500.png`: the store icon, the face itself on slate. Garmin asks for 500 × 500 px sRGB with about 10 px of padding, on a solid background that is neither transparent nor black.
 - `hero-1440x720.png`: the hero image, three watches on slate and no text, so one image serves both languages.
-- Screenshots, 454 × 454: `1-in-range.png` (tall layout), `2-rising-classic.png` (classic layout), `3-low-tinted-mmol.png` (low, in mmol/L, minutes tinted) and `4-always-on.png`.
+- Screenshots, 454 × 454: `1-in-range.png` (tall layout), `2-rising-classic.png` (classic layout), `3-low-tinted-mmol.png` (low, in mmol/L, minutes tinted), `4-always-on.png` and `5-mip-fr255.png` (the Forerunner 255's 260 px MIP screen, scaled up).
 - `all-devices.png`: the face on each supported watch, for the README and the description.
 
 `icon-512.png` is the dot-grid brand mark from `tools/gen_assets.py`, used for the launcher icon and on GitHub, not in the store.
