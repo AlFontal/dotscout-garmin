@@ -346,8 +346,15 @@ def main():
             frames.append(watch_on_transparency(screen(im, sim), sim, image).resize((500, 500), Image.LANCZOS))
             print("captured", spec["scenario"], "always-on" if spec.get("aod") else "")
         frames[0].save(os.path.join(OUT, "store-icon-transparent-500.png"))
+        # The store takes a cover image under 300 KB; full colour is about 340 KB. One 256-colour
+        # palette for all frames (APNG has a single palette), quantized together, is about 55 KB.
+        strip = Image.new("RGBA", (500, 500 * len(frames)))
+        for i, frame in enumerate(frames):
+            strip.paste(frame, (0, 500 * i))
+        strip = strip.quantize(256, method=Image.Quantize.FASTOCTREE)
+        frames = [strip.crop((0, 500 * i, 500, 500 * (i + 1))) for i in range(len(frames))]
         # blend=0 replaces each frame's region outright instead of drawing it over the last one.
-        frames[0].save(os.path.join(OUT, "store-icon-animated-500.png"), save_all=True,
+        frames[0].save(os.path.join(OUT, "store-icon-animated-500.png"), save_all=True, optimize=True,
                        append_images=frames[1:], duration=ANIMATED_FRAME_MS, loop=0, disposal=0, blend=0)
         print("wrote store-icon-transparent-500 and store-icon-animated-500")
 
