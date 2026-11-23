@@ -157,6 +157,7 @@ class CgmFaceView extends WatchUi.WatchFace {
         }
         var settings = System.getDeviceSettings();
         _aod = _sleeping && (settings has :requiresBurnInProtection) && settings.requiresBurnInProtection;
+        Palette.load();
         _ox = 0;
         _oy = 0;
         if (_aod) {

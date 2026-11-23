@@ -44,6 +44,18 @@
     <string id="TimeWhite">White</string>
     <string id="TimeMinutes">Minutes by glucose</string>
     <string id="TimeAll">Whole time by glucose</string>
+    <string id="ColorInRangeTitle">In-range colour</string>
+    <string id="ColorHighTitle">High colour</string>
+    <string id="ColorVeryHighTitle">Very high colour</string>
+    <string id="ColorLowTitle">Low colour</string>
+    <string id="ColEmerald">Emerald (Dotscout)</string>
+    <string id="ColGreen">Green (Classic)</string>
+    <string id="ColAmber">Amber (Dotscout)</string>
+    <string id="ColYellow">Yellow (Classic)</string>
+    <string id="ColOrange">Orange (Dotscout)</string>
+    <string id="ColDeepOrange">Deep orange (Classic)</string>
+    <string id="ColCoral">Coral red (Dotscout)</string>
+    <string id="ColRed">Red (Classic)</string>
 
     <string id="SlotLeftTitle">Data field 1 (left)</string>
     <string id="SlotRightTitle">Data field 2</string>
