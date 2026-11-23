@@ -133,13 +133,12 @@ module Palette {
     const AOD_DOT_LOW = 0x802F36;
 
     // Classic traffic-light colours, indexed in range, high, very high, low. Each state has its own
-    // setting choosing between the Dotscout colours above (0) and these (1). On MIP the classic
-    // green would snap to teal, so it is pure green instead; there is no second orange in the 64
-    // colours, so very high stays the same.
-    (:amoled) const CLASSIC = [0x4ADE80, 0xFACC15, 0xF97316, 0xEF4444];
+    // setting choosing between the Dotscout colours above (0) and these (1). The green is pure
+    // green everywhere. MIP has no second orange in its 64 colours, so very high stays the same.
+    (:amoled) const CLASSIC = [0x00FF00, 0xFACC15, 0xF97316, 0xEF4444];
     (:mip) const CLASSIC = [0x00FF00, 0xFFFF00, 0xFF5500, 0xFF0000];
-    const CLASSIC_AOD = [0x37A660, 0xBB990F, 0xBA5610, 0xB33333];        // 75% on black
-    const CLASSIC_AOD_DOT = [0x256F40, 0x7D660A, 0x7C390B, 0x772222];    // 50% on black
+    const CLASSIC_AOD = [0x00BF00, 0xBB990F, 0xBA5610, 0xB33333];        // 75% on black
+    const CLASSIC_AOD_DOT = [0x007F00, 0x7D660A, 0x7C390B, 0x772222];    // 50% on black
     const COLOR_KEYS = ["ColorInRange", "ColorHigh", "ColorVeryHigh", "ColorLow"];
     var classic as Array<Boolean> = [false, false, false, false];
 
