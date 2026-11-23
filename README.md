@@ -11,7 +11,7 @@ A Garmin watch face that puts your continuous glucose reading next to the time, 
 - A dim always-on mode that stays within AMOLED burn-in limits.
 - mg/dL or mmol/L, in English or Spanish.
 
-Colour only ever means glucose: green in range, amber high, orange very high, red low, grey when the reading is over 15 minutes old.
+Colour only ever means glucose: green in range, amber high, orange very high, red low, grey when the reading is over 15 minutes old. Each of the four can use Dotscout's own colours (the default) or the classic traffic-light ones.
 
 ## Setup
 
@@ -33,6 +33,7 @@ Readings arrive through the Garmin Connect app on your phone. Connect IQ lets a 
 | Low threshold, High threshold | In either unit: values under 30 are read as mmol/L (3.9 or 70; 10 or 180) |
 | Layout | Tall graph with the fields beside it (default), or Classic with the fields below |
 | Time colour | White, minutes by glucose, or the whole time by glucose |
+| In-range, high, very high and low colours | Dotscout (default) or Classic, for each state on its own |
 | Data fields 1–4, Bottom field | Steps, elevation gain, Body Battery, temperature, heart rate, insulin on board, carbs on board, basal rate, battery, calories, VO2 max, stress, floors or weekly active minutes |
 
 12/24-hour time and always-on follow the watch's own settings. Very high starts at 250 mg/dL.

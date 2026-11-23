@@ -100,7 +100,7 @@ The layout is written in design units on the 454 px design and scaled to the scr
 
 ## Store images
 
-`python3 tools/store_shots.py` renders the store icon, hero image, screenshots and the device sheet (`docs/store/`) in the simulator. It builds a patched copy of the project for each shot (fixed time, demo data, sample field values) and crops each watch screen using the SDK's display rectangle. `docs/store-listing.md` holds the listing text in English and Spanish and says which image goes where.
+`python3 tools/store_shots.py` renders the store icons (still and animated), hero image, screenshots and the device sheet (`docs/store/`) in the simulator; pass `animated` to render only the animated icon. It builds a patched copy of the project for each shot (fixed time, demo data, sample field values) and crops each watch screen using the SDK's display rectangle. `docs/store-listing.md` holds the listing text in English and Spanish and says which image goes where.
 
 ## Releases
 

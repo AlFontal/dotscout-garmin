@@ -44,6 +44,18 @@
     <string id="TimeWhite">Blanco</string>
     <string id="TimeMinutes">Minutos según la glucosa</string>
     <string id="TimeAll">Toda la hora según la glucosa</string>
+    <string id="ColorInRangeTitle">Color en rango</string>
+    <string id="ColorHighTitle">Color alto</string>
+    <string id="ColorVeryHighTitle">Color muy alto</string>
+    <string id="ColorLowTitle">Color bajo</string>
+    <string id="ColEmerald">Esmeralda (Dotscout)</string>
+    <string id="ColGreen">Verde (Clásico)</string>
+    <string id="ColAmber">Ámbar (Dotscout)</string>
+    <string id="ColYellow">Amarillo (Clásico)</string>
+    <string id="ColOrange">Naranja (Dotscout)</string>
+    <string id="ColDeepOrange">Naranja intenso (Clásico)</string>
+    <string id="ColCoral">Rojo coral (Dotscout)</string>
+    <string id="ColRed">Rojo (Clásico)</string>
 
     <string id="SlotLeftTitle">Dato 1 (izquierda)</string>
     <string id="SlotRightTitle">Dato 2</string>

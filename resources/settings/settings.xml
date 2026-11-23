@@ -39,6 +39,30 @@
                 <listEntry value="2">@Strings.TimeAll</listEntry>
             </settingConfig>
         </setting>
+        <setting propertyKey="@Properties.ColorInRange" title="@Strings.ColorInRangeTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.ColEmerald</listEntry>
+                <listEntry value="1">@Strings.ColGreen</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.ColorHigh" title="@Strings.ColorHighTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.ColAmber</listEntry>
+                <listEntry value="1">@Strings.ColYellow</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.ColorVeryHigh" title="@Strings.ColorVeryHighTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.ColOrange</listEntry>
+                <listEntry value="1">@Strings.ColDeepOrange</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.ColorLow" title="@Strings.ColorLowTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.ColCoral</listEntry>
+                <listEntry value="1">@Strings.ColRed</listEntry>
+            </settingConfig>
+        </setting>
         <setting propertyKey="@Properties.Stat1" title="@Strings.SlotLeftTitle">
             <settingConfig type="list">
                 <listEntry value="0">@Strings.FieldNone</listEntry>

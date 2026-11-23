@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Render the store screenshots, the store icon and the device sheet in the Connect IQ simulator.
+"""Render the store screenshots, the store icons and the device sheet in the Connect IQ simulator.
 
 Each shot builds a patched copy of the project: demo data in a fixed state, a fixed time and
 reading age, sample field values instead of the simulator's zeros, and always-on forced on when
 asked. It runs the copy in the simulator, captures the window and crops the watch screen using
 the device's display rectangle from the SDK.
 
-Usage: python3 tools/store_shots.py [screens] [icon] [sheet]   (default: all three)
+Usage: python3 tools/store_shots.py [screens] [icon] [sheet] [animated]   (default: all four)
 Needs Pillow, the Connect IQ SDK with the devices installed, and the developer key (DEVKEY).
 Runs on macOS: it drives the simulator window with screencapture and Swift.
 """
@@ -19,7 +19,7 @@ import sys
 import tempfile
 import time
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "docs", "store")
@@ -30,6 +30,19 @@ TITLE_BAR = 28  # simulator window title bar, in points; the status bar below th
 ICON_BG = (0x26, 0x2E, 0x36)    # dark slate, so the black face still reads as a disc
 HERO_BG = (0x1B, 0x21, 0x28)
 HERO = ["venu3", "fr965", "fenix8pro47mm"]    # left, centre (largest), right
+
+# The store icon can be an APNG: the store serves it unchanged and the tile animates. Each frame is
+# the whole watch on transparency, cycling through the face's options; the first frame is also
+# saved on its own as a still, and is what viewers without APNG support show.
+ANIMATED_DEVICE = "fr970"
+ANIMATED = [
+    dict(scenario="DAY", layout=1, tint=0, units=0, age=2),
+    dict(scenario="RISING", layout=0, tint=0, units=0, age=1),
+    dict(scenario="HIGH", layout=1, tint=2, units=0, age=4),
+    dict(scenario="FALLING", layout=1, tint=1, units=1, age=3),
+    dict(scenario="DAY", layout=1, tint=0, units=0, age=2, aod=True),
+]
+ANIMATED_FRAME_MS = 2000
 
 # Mock buckets with a pleasant in-range day curve (MockCgm.DAY is a function of the bucket).
 DAY_BUCKET = 100869
@@ -125,7 +138,8 @@ def build(work, device, scenario, layout, tint, units, age=2, aod=False, hhmm=(1
          "    function value(field as Number, cgm as Dictionary?) as Array? {\n"
          '        if (field == STEPS) { return [:steps, "8432", ""]; }\n'
          '        if (field == ELEVATION_GAIN) { return [:ascent, "124", "m"]; }\n'
-         '        if (field == TEMPERATURE) { return [:temperature, "19°", ""]; }\n'),
+         '        if (field == TEMPERATURE) { return [:temperature, "19°", ""]; }\n'
+         '        if (field == BODY_BATTERY) { return [:bodyBattery, "88", "%"]; }\n'),
     ])
     prg = os.path.join(work, "face.prg")
     sh("monkeyc", "-d", device, "-f", "monkey.jungle", "-o", prg, "-y", DEVKEY, cwd=work)
@@ -225,6 +239,32 @@ def device_shot(im, image):
     return out
 
 
+def watch_on_transparency(face, sim, image):
+    """The face inside the device render, cut out of the render's background onto transparency and
+    cropped to a square around the screen, so the band runs off the top and bottom edges."""
+    loc = sim["display"]["location"]
+    render = image.convert("RGBA")
+    out = Image.new("RGBA", render.size, (0, 0, 0, 255))
+    disc = round_mask(face)
+    out.paste(disc, (loc["x"], loc["y"]), disc)
+    # The screen is a transparent hole in the render, so the bezel overlaps the face's edge.
+    out.alpha_composite(render)
+    # The render sits on a solid colour (white for most): flood-fill it from the corners, as in
+    # device_shot(). Then pull the edge in a pixel and soften it, so no light fringe is left.
+    mask = out.convert("L").point(lambda v: 20 + v * 235 // 255)
+    w, h = mask.size
+    for corner in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+        ImageDraw.floodfill(mask, corner, 0, thresh=40)
+    mask = mask.point(lambda v: 0 if v == 0 else 255).filter(ImageFilter.MinFilter(3))
+    out.putalpha(mask.filter(ImageFilter.GaussianBlur(0.6)))
+    # The watch's widest point (the buttons) about 10 px in from the sides at 500 px; past the
+    # render's edges the crop is transparent.
+    cx, cy = loc["x"] + loc["width"] // 2, loc["y"] + loc["height"] // 2
+    left, _, right, _ = mask.getbbox()
+    side = 2 * max(cx - left, right - cx) * 500 // 480
+    return out.crop((cx - side // 2, cy - side // 2, cx - side // 2 + side, cy - side // 2 + side))
+
+
 def round_mask(img):
     size = img.width
     k = 4
@@ -236,7 +276,7 @@ def round_mask(img):
 
 
 def main():
-    want = set(sys.argv[1:]) or {"screens", "icon", "sheet"}
+    want = set(sys.argv[1:]) or {"screens", "icon", "sheet", "animated"}
     tmp = tempfile.mkdtemp(prefix="dotscout-shots-")
     swift = os.path.join(tmp, "windows.swift")
     open(swift, "w").write(SWIFT)
@@ -297,6 +337,26 @@ def main():
             hero.paste(tile, (cx - tile.width // 2, (720 - height) // 2), tile)
         hero.save(os.path.join(OUT, "hero-1440x720.png"))
         print("wrote hero")
+
+    if "animated" in want:
+        frames = []
+        for spec in ANIMATED:
+            im, sim, image = capture(build(work, ANIMATED_DEVICE, **spec), ANIMATED_DEVICE, swift, shot)
+            # 500 x 500, like the other store icon.
+            frames.append(watch_on_transparency(screen(im, sim), sim, image).resize((500, 500), Image.LANCZOS))
+            print("captured", spec["scenario"], "always-on" if spec.get("aod") else "")
+        frames[0].save(os.path.join(OUT, "store-icon-transparent-500.png"))
+        # The store takes a cover image under 300 KB; full colour is about 340 KB. One 256-colour
+        # palette for all frames (APNG has a single palette), quantized together, is about 55 KB.
+        strip = Image.new("RGBA", (500, 500 * len(frames)))
+        for i, frame in enumerate(frames):
+            strip.paste(frame, (0, 500 * i))
+        strip = strip.quantize(256, method=Image.Quantize.FASTOCTREE)
+        frames = [strip.crop((0, 500 * i, 500, 500 * (i + 1))) for i in range(len(frames))]
+        # blend=0 replaces each frame's region outright instead of drawing it over the last one.
+        frames[0].save(os.path.join(OUT, "store-icon-animated-500.png"), save_all=True, optimize=True,
+                       append_images=frames[1:], duration=ANIMATED_FRAME_MS, loop=0, disposal=0, blend=0)
+        print("wrote store-icon-transparent-500 and store-icon-animated-500")
 
     subprocess.run(["pkill", "-f", "monkeydodeux"])
     shutil.rmtree(tmp, ignore_errors=True)

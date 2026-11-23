@@ -3,6 +3,7 @@
 Text and images for the Connect IQ Store page, in English and Spanish. The images are in `docs/store/` and are rendered by `tools/store_shots.py`:
 
 - `store-icon-500.png`: the store icon, the face itself on slate. Garmin asks for 500 × 500 px sRGB with about 10 px of padding, on a solid background that is neither transparent nor black.
+- `store-icon-animated-500.png`: the store icon as an animated PNG (APNG): the Forerunner 970 on transparency, cycling every 2 s through the tall layout in range, classic rising, high with the whole time tinted, low in mmol/L with the minutes tinted, and always-on. The store serves the file unchanged and the tile animates, as other faces do (Tablo, for one, has a transparent APNG icon), so Garmin's no-transparency guidance doesn't seem to be enforced. It uses one shared 256-colour palette to stay under the form's 300 KB limit for the cover image (Edit Details > Cover Image), and it has been the live icon since 2026-10-17. `store-icon-transparent-500.png` is its first frame as a still.
 - `hero-1440x720.png`: the hero image, three watches on slate and no text, so one image serves both languages.
 - Screenshots, 454 × 454: `1-in-range.png` (tall layout), `2-rising-classic.png` (classic layout), `3-low-tinted-mmol.png` (low, in mmol/L, minutes tinted), `4-always-on.png` and `5-mip-fr255.png` (the Forerunner 255's 260 px MIP screen, scaled up).
 - `all-devices.png`: the face on each supported watch, for the README and the description.

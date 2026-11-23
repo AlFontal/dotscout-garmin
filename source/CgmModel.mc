@@ -132,22 +132,50 @@ module Palette {
     const AOD_DOT_VERY_HIGH = 0x80452A;
     const AOD_DOT_LOW = 0x802F36;
 
+    // Classic traffic-light colours, indexed in range, high, very high, low. Each state has its own
+    // setting choosing between the Dotscout colours above (0) and these (1). The green is pure
+    // green everywhere. MIP has no second orange in its 64 colours, so very high stays the same.
+    (:amoled) const CLASSIC = [0x00FF00, 0xFACC15, 0xF97316, 0xEF4444];
+    (:mip) const CLASSIC = [0x00FF00, 0xFFFF00, 0xFF5500, 0xFF0000];
+    const CLASSIC_AOD = [0x00BF00, 0xBB990F, 0xBA5610, 0xB33333];        // 75% on black
+    const CLASSIC_AOD_DOT = [0x007F00, 0x7D660A, 0x7C390B, 0x772222];    // 50% on black
+    const COLOR_KEYS = ["ColorInRange", "ColorHigh", "ColorVeryHigh", "ColorLow"];
+    var classic as Array<Boolean> = [false, false, false, false];
+
+    // Reads the four colour settings; called once per frame.
+    function load() as Void {
+        for (var i = 0; i < 4; i++) {
+            classic[i] = CgmConfig.getNumber(COLOR_KEYS[i], 0) == 1;
+        }
+    }
+
+    function stateIndex(state as Symbol) as Number {
+        if (state == :high) { return 1; }
+        if (state == :veryHigh) { return 2; }
+        if (state == :low) { return 3; }
+        return 0;
+    }
+
     // Graph dot colour for a reading's state.
     function dot(state as Symbol, aod as Boolean) as Number {
+        if (state == :stale) { return aod ? AOD_MUTE : MUTE; }
+        var i = stateIndex(state);
+        if (classic[i]) { return aod ? CLASSIC_AOD_DOT[i] : CLASSIC[i]; }
         if (state == :low) { return aod ? AOD_DOT_LOW : DOT_LOW; }
         if (state == :high) { return aod ? AOD_DOT_HIGH : DOT_HIGH; }
         if (state == :veryHigh) { return aod ? AOD_DOT_VERY_HIGH : DOT_VERY_HIGH; }
-        if (state == :stale) { return aod ? AOD_MUTE : MUTE; }
         return aod ? AOD_GREEN : GREEN;
     }
 
     // Glucose number and time-tint colour: the dot colours, a little brighter in always-on.
     function glucose(state as Symbol, aod as Boolean) as Number {
         if (!aod) { return dot(state, false); }
+        if (state == :stale) { return AOD_MUTE; }
+        var i = stateIndex(state);
+        if (classic[i]) { return CLASSIC_AOD[i]; }
         if (state == :low) { return AOD_LOW; }
         if (state == :high) { return AOD_HIGH; }
         if (state == :veryHigh) { return AOD_VERY_HIGH; }
-        if (state == :stale) { return AOD_MUTE; }
         return AOD_IN_RANGE;
     }
 
